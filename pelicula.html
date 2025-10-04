@@ -101,9 +101,9 @@
     const TMDB_KEY = "cc5b94165972aa509a349161d13d4fc9";
     const TMDB_BASE = "https://api.themoviedb.org/3";
     const TMDB_IMG = "https://image.tmdb.org/t/p/original";
-    const VIDEO_FOLDER = "peliculas";
+    const VIDEO_FOLDER = "peliculas"; // Carpeta local alternativa
     const FORMATS = [".mkv", ".mp4", ".m3u8"];
-    const JSON_PATH = "data/enlaces.json";
+    const JSON_PATH = "data/enlaces.json"; // Archivo JSON en tu carpeta data/
 
     const id = new URLSearchParams(window.location.search).get("id");
 
@@ -116,7 +116,7 @@
 
     async function init() {
       try {
-        // Cargar información de TMDb
+        // 🔹 Cargar información desde TMDb
         const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_KEY}&language=es-MX`);
         const movie = await res.json();
         renderMovie(movie);
@@ -167,7 +167,7 @@
     async function loadVideo(id) {
       let found = null;
 
-      // 1️⃣ Buscar en enlaces.json
+      // 🔹 1️⃣ Buscar enlace en data/enlaces.json
       try {
         const res = await fetch(JSON_PATH);
         const data = await res.json();
@@ -176,7 +176,7 @@
         console.warn("No se pudo cargar enlaces.json", e);
       }
 
-      // 2️⃣ Si no hay enlace manual, buscar en /peliculas/
+      // 🔹 2️⃣ Si no hay enlace manual, buscar archivo local en /peliculas/
       if (!found) {
         for (const ext of FORMATS) {
           const url = `${window.location.origin}/${VIDEO_FOLDER}/${id}${ext}`;
@@ -187,16 +187,23 @@
         }
       }
 
-      // 3️⃣ Mostrar o reproducir
+      // 🔹 3️⃣ Mostrar reproductor o aviso
+      const playerDiv = document.getElementById("player");
+      playerDiv.innerHTML = ""; // limpiar antes
+
       if (!found) {
-        document.getElementById("player").innerHTML = `
+        playerDiv.innerHTML = `
           <div class="not-found">🎬 Esta película aún no está disponible.<br>
           Agrega un enlace en <code>${JSON_PATH}</code> o sube el archivo a <code>/${VIDEO_FOLDER}/${id}.mp4</code>.</div>`;
         return;
       }
 
+      console.log("🎥 Enlace de video encontrado:", found);
+
+      // 🔹 4️⃣ Inicializar JWPlayer correctamente
       jwplayer("player").setup({
         file: found,
+        type: "mp4",
         width: "100%",
         aspectratio: "16:9",
         autostart: false,
