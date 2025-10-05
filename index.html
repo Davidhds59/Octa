@@ -14,200 +14,115 @@
       color: #fff;
       font-family: 'Roboto', sans-serif;
     }
-    body::before {content: ''; position: fixed; top: 0; left: 0; height: 100%; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://pbs.twimg.com/media/Gp972OIWMAAeIHy?format=jpg&name=4096x4096') no-repeat center center/cover; z-index: -1;}
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      height: 100%; width: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.9)),
+        url('https://pbs.twimg.com/media/Gp972OIWMAAeIHy?format=jpg&name=4096x4096') no-repeat center center/cover;
+      z-index: -1;
+    }
     .small-note {color: #bbb; font-size: .85rem; text-align:center; padding:10px 0;}
     nav {
       background: rgba(0,0,0,0.90);
-      position: fixed;
-      top: 0;
-      left: 0;
+      position: fixed; top: 0; left: 0;
       width: 100%;
       z-index: 999;
     }
-    .container {
-      margin-top: 160px;
-    }
+    .container {margin-top: 160px;}
     .movie-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      justify-content: center;
+      gap: 15px; justify-content: center;
     }
     .movie-card {
-      width: 100%;
-      aspect-ratio: 2/3;
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-      cursor: pointer;
+      width: 100%; aspect-ratio: 2/3;
+      border-radius: 10px; overflow: hidden;
+      position: relative; cursor: pointer;
       transition: transform 0.3s ease, opacity 0.6s ease;
-      background: #222;
-      opacity: 0;
+      background: #222; opacity: 0;
     }
-    .movie-card.show {
-      opacity: 1;
-    }
-    .movie-card:hover {
-      transform: scale(1.05);
-    }
-    .movie-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    /* Fondo desvanecido detrás del título */
+    .movie-card.show {opacity: 1;}
+    .movie-card:hover {transform: scale(1.05);}
+    .movie-card img {width: 100%; height: 100%; object-fit: cover; display: block;}
     .movie-title {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      position: absolute; bottom: 0; left: 0; right: 0;
       padding: 10px;
       background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.5));
-      color: #fff;
-      font-weight: bold;
-      text-align: center;
-      font-size: 0.7rem;
+      color: #fff; font-weight: bold;
+      text-align: center; font-size: 0.7rem;
     }
     .rating {
-      position: absolute;
-      top: 8px;
-      left: 8px;
+      position: absolute; top: 8px; left: 8px;
       background: rgba(0,0,0,0.6);
-      border-radius: 15px;
-      padding: 3px 6px;
-      display: flex;
-      align-items: center;
-      font-size: 0.8rem;
+      border-radius: 15px; padding: 3px 6px;
+      display: flex; align-items: center; font-size: 0.8rem;
     }
-    .rating i {
-      color: #ffcc00;
-      font-size: 1rem;
-      margin-right: 2px;
-    }
+    .rating i {color: #ffcc00; font-size: 1rem; margin-right: 2px;}
     .favorite {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      cursor: pointer;
-      color: white;
+      position: absolute; top: 8px; right: 8px;
+      cursor: pointer; color: white;
       background: rgba(0,0,0,0.7);
-      border-radius: 50%;
-      padding: 6px;
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border-radius: 50%; padding: 6px;
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
       transition: background 0.3s, transform 0.3s;
     }
-    .favorite:hover {
-      transform: scale(1.1);
-    }
-    .favorite.active {
-      color: #e50914;
-      background: rgba(255,255,255,0.15);
-    }
+    .favorite:hover {transform: scale(1.1);}
+    .favorite.active {color: #e50914; background: rgba(255,255,255,0.15);}
     .tabs-container {
-      display: flex;
-      overflow-x: auto;
-       background: rgba(0,0,0,0.90);
-      white-space: nowrap;
-      padding: 10px 0;
+      display: flex; overflow-x: auto;
+      background: rgba(0,0,0,0.90);
+      white-space: nowrap; padding: 10px 0;
     }
     .tab-item {
-      color: #ccc;
-      margin: 0 15px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: color 0.3s;
+      color: #ccc; margin: 0 15px;
+      font-weight: bold; cursor: pointer;
+      font-size: 1rem; transition: color 0.3s;
     }
     .tab-item.active {
-      color: #fff;
-      border-bottom: 2px solid #e50914;
+      color: #fff; border-bottom: 2px solid #e50914;
       padding-bottom: 3px;
     }
     .btn-ver-mas {
-      display: block;
-      margin: 30px auto;
-      background: #e50914;
-      color: #fff;
-      border: none;
-      border-radius: 25px;
-      padding: 10px 25px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s;
+      display: block; margin: 30px auto;
+      background: #e50914; color: #fff;
+      border: none; border-radius: 25px;
+      padding: 10px 25px; font-size: 1rem;
+      cursor: pointer; transition: background 0.3s;
     }
-    .btn-ver-mas:hover {
-      background: #b00610;
-    }
+    .btn-ver-mas:hover {background: #b00610;}
     .skeleton {
-      background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 10px;
-      width: 100%;
-      aspect-ratio: 2/3;
+      background: linear-gradient(90deg,#2a2a2a 25%,#3a3a3a 50%,#2a2a2a 75%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite;
+      border-radius: 10px; width: 100%; aspect-ratio: 2/3;
     }
     @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
+      0% {background-position: -200% 0;}
+      100% {background-position: 200% 0;}
     }
-
-    /* 🔍 Buscador animado */
     .search-container {
-      position: absolute;
-      left: 15px;
-      top: 10px;
-      display: flex;
-      align-items: center;
+      position: absolute; left: 15px; top: 10px;
+      display: flex; align-items: center;
     }
     .search-icon {
-      cursor: pointer;
-      color: #fff;
-      font-size: 28px;
-      transition: transform 0.3s ease;
+      cursor: pointer; color: #fff;
+      font-size: 28px; transition: transform 0.3s ease;
     }
-    .search-icon:hover {
-      transform: scale(1.1);
-    }
+    .search-icon:hover {transform: scale(1.1);}
     #buscar {
-      background: rgba(0,0,0,0.8);
-      color: #fff;
-      border: none;
-      border-radius: 20px;
-      padding: 5px 10px;
-      width: 0;
-      font-size: 1rem;
-      margin-left: 10px;
-      outline: none;
-      opacity: 0;
+      background: rgba(0,0,0,0.8); color: #fff;
+      border: none; border-radius: 20px;
+      padding: 5px 10px; width: 0;
+      font-size: 1rem; margin-left: 10px;
+      outline: none; opacity: 0;
       transition: width 0.4s ease, opacity 0.4s ease;
     }
-    #buscar::placeholder {
-      color: #888;
-    }
-    .search-container.active #buscar {
-      width: 180px;
-      opacity: 1;
-    }
-
-    @media (max-width: 900px) {
-      .movie-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-    @media (max-width: 600px) {
-      .movie-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-      }
-      .btn-ver-mas {
-        width: 50%;
-      }
-    }
+    #buscar::placeholder {color: #888;}
+    .search-container.active #buscar {width: 180px; opacity: 1;}
+    @media (max-width: 900px) {.movie-grid {grid-template-columns: repeat(3,1fr);}}
+    @media (max-width: 600px) {.movie-grid {grid-template-columns: repeat(3,1fr); gap: 10px;} .btn-ver-mas {width: 50%;}}
   </style>
 </head>
 
@@ -218,7 +133,7 @@
         <i class="material-icons search-icon" id="toggleSearch">search</i>
         <input type="text" id="buscar" placeholder="Buscar..." />
       </div>
-          <a href="#" data-target="menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
+      <a href="#" data-target="menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
     </div>
     <div class="tabs-container" id="genreTabs"></div>
   </nav>
@@ -238,37 +153,189 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const elems = document.querySelectorAll('.sidenav');
-      M.Sidenav.init(elems);
+      M.Sidenav.init(document.querySelectorAll('.sidenav'));
     });
 
-    // 🔍 Animación del buscador
     const toggleSearch = document.getElementById("toggleSearch");
     const searchContainer = document.querySelector(".search-container");
     const inputBuscar = document.getElementById("buscar");
 
     toggleSearch.addEventListener("click", () => {
       searchContainer.classList.toggle("active");
-      if (searchContainer.classList.contains("active")) {
-        inputBuscar.focus();
-      } else {
-        inputBuscar.blur();
-        inputBuscar.value = "";
-        inputBuscar.dispatchEvent(new Event("input"));
-      }
+      if (searchContainer.classList.contains("active")) inputBuscar.focus();
+      else {inputBuscar.blur(); inputBuscar.value = ""; inputBuscar.dispatchEvent(new Event("input"));}
     });
 
     const API_KEY = "cc5b94165972aa509a349161d13d4fc9";
     const TMDB_URL = "https://api.themoviedb.org/3";
     const IMG_URL = "https://image.tmdb.org/t/p/w500";
     const PLACEHOLDER = "https://via.placeholder.com/500x750?text=No+Image";
+
     const peliculasManual = [
-      
+      { id: 120 },
+  { id: 121 },
+  { id: 122 },
+  { id: 155 },
+  { id: 176 },
+  { id: 214 },
+  { id: 215 },
+  { id: 272 },
+  { id: 277 },
+  { id: 329 },
+  { id: 330 },
+  { id: 331 },
+  { id: 497 },
+  { id: 563 },
+  { id: 617 },
+  { id: 663 },
+  { id: 834 },
+  { id: 854 },
+  { id: 1402 },
+  { id: 1427 },
+  { id: 1576 },
+  { id: 1577 },
+  { id: 1579 },
+  { id: 1643 },
+  { id: 1979 },
+  { id: 2675 },
+  { id: 3600 },
+  { id: 3602 },
+  { id: 3933 },
+  { id: 6957 },
+  { id: 7347 },
+  { id: 7737 },
+  { id: 9479 },
+  { id: 9480 },
+  { id: 9614 },
+  { id: 9738 },
+  { id: 9757 },
+  { id: 10047 },
+  { id: 10214 },
+  { id: 10367 },
+  { id: 10585 },
+  { id: 11186 },
+  { id: 11187 },
+  { id: 11249 },
+  { id: 11917 },
+  { id: 11932 },
+  { id: 12153 },
+  { id: 12437 },
+  { id: 14098 },
+  { id: 14836 },
+  { id: 16761 },
+  { id: 16871 },
+  { id: 17124 },
+  { id: 22804 },
+  { id: 26393 },
+  { id: 35791 },
+  { id: 37221 },
+  { id: 37708 },
+  { id: 41439 },
+  { id: 47931 },
+  { id: 49026 },
+  { id: 58151 },
+  { id: 62214 },
+  { id: 71679 },
+  { id: 82700 },
+  { id: 135397 },
+  { id: 138843 },
+  { id: 139038 },
+  { id: 153518 },
+  { id: 166424 },
+  { id: 173897 },
+  { id: 184345 },
+  { id: 259693 },
+  { id: 264419 },
+  { id: 298250 },
+  { id: 300669 },
+  { id: 351286 },
+  { id: 381283 },
+  { id: 396535 },
+  { id: 400136 },
+  { id: 405774 },
+  { id: 414906 },
+  { id: 423108 },
+  { id: 424121 },
+  { id: 443849 },
+  { id: 454640 },
+  { id: 458305 },
+  { id: 460458 },
+  { id: 482373 },
+  { id: 500921 },
+  { id: 502356 },
+  { id: 503619 },
+  { id: 507086 },
+  { id: 509585 },
+  { id: 540901 },
+  { id: 552524 },
+  { id: 560050 },
+  { id: 565770 },
+  { id: 581392 },
+  { id: 582927 },
+  { id: 598175 },
+  { id: 602734 },
+  { id: 617126 },
+  { id: 634492 },
+  { id: 654299 },
+  { id: 664413 },
+  { id: 676547 },
+  { id: 691363 },
+  { id: 739413 },
+  { id: 744653 },
+  { id: 756999 },
+  { id: 763215 },
+  { id: 777443 },
+  { id: 829557 },
+  { id: 829560 },
+  { id: 851644 },
+  { id: 864959 },
+  { id: 936108 },
+  { id: 949423 },
+  { id: 951491 },
+  { id: 999243 },
+  { id: 1010581 },
+  { id: 1011477 },
+  { id: 1018634 },
+  { id: 1038392 },
+  { id: 1049942 },
+  { id: 1054867 },
+  { id: 1061474 },
+  { id: 1069387 },
+  { id: 1071585 },
+  { id: 1078605 },
+  { id: 1083433 },
+  { id: 1083862 },
+  { id: 1084153 },
+  { id: 1087192 },
+  { id: 1100988 },
+  { id: 1125257 },
+  { id: 1151031 },
+  { id: 1156593 },
+  { id: 1175942 },
+  { id: 1200801 },
+  { id: 1233413 },
+  { id: 1234821 },
+  { id: 1242434 },
+  { id: 1245993 },
+  { id: 1246049 },
+  { id: 1252309 },
+  { id: 1263256 },
+  { id: 1278950 },
+  { id: 1289936 },
+  { id: 1294203 },
+  { id: 1297028 },
+  { id: 1311031 },
+  { id: 1319965 },
+  { id: 1319969 },
+  { id: 1326106 },
+  { id: 1405338 },
+  { id: 1425045 },
     ];
 
     let allMovies = [];
+    let estrenosMovies = [];
     let genresMap = new Map();
-    let currentGenre = "TODAS";
+    let currentGenre = "Todas";
 
     const getFavorites = () => JSON.parse(localStorage.getItem("favoritos")) || [];
     const saveFavorites = (favs) => localStorage.setItem("favoritos", JSON.stringify(favs));
@@ -294,7 +361,6 @@
         </div>
         <div class="movie-title">${movie.title}</div>
       `;
-
       card.querySelector(".favorite").addEventListener("click", (e) => {
         e.stopPropagation();
         const id = movie.id;
@@ -307,38 +373,34 @@
           e.currentTarget.classList.add("active");
         }
         saveFavorites(favs);
-        if (currentGenre === "FAVORITOS") renderMovies("FAVORITOS");
+        if (currentGenre === "Favoritos") renderMovies("Favoritos");
       });
-
       setTimeout(() => card.classList.add("show"), 100);
       return card;
     }
 
-    function renderMovies(genre = "TODAS", append = false) {
+    function renderMovies(genre = "Todas", append = false) {
       const container = document.getElementById("movieContainer");
       const btnVerMas = document.getElementById("verMasBtn");
-
       let moviesToShow = [];
-      if (genre === "FAVORITOS") {
+
+      if (genre === "Favoritos") {
         const favs = getFavorites();
         moviesToShow = allMovies.filter(m => favs.includes(m.id));
-      } else if (genre === "TODAS") {
+      } else if (genre === "Estrenos 2025") {
+        moviesToShow = estrenosMovies;
+      } else if (genre === "Todas") {
         moviesToShow = allMovies;
       } else {
         moviesToShow = genresMap.get(genre) || [];
       }
 
       if (!append) container.innerHTML = "";
-
       const start = append ? container.childElementCount : 0;
       const nextMovies = moviesToShow.slice(start, start + 20);
 
-      if (moviesToShow.length > start + nextMovies.length) {
-        btnVerMas.style.display = "block";
-        btnVerMas.onclick = () => renderMovies(genre, true);
-      } else {
-        btnVerMas.style.display = "none";
-      }
+      btnVerMas.style.display = moviesToShow.length > start + nextMovies.length ? "block" : "none";
+      if (btnVerMas.style.display === "block") btnVerMas.onclick = () => renderMovies(genre, true);
 
       nextMovies.forEach(() => {
         const skeleton = document.createElement("div");
@@ -355,8 +417,7 @@
     function renderTabs() {
       const tabs = document.getElementById("genreTabs");
       tabs.innerHTML = "";
-      const baseTabs = ["Todas", "Favoritos"];
-
+      const baseTabs = ["Todas", "Favoritos", "Estrenos 2025"];
       [...baseTabs, ...genresMap.keys()].forEach(tab => {
         const el = document.createElement("div");
         el.classList.add("tab-item");
@@ -380,10 +441,14 @@
     async function loadMovies() {
       try {
         const responses = await Promise.all(
-          peliculasManual.map(p => fetch(`${TMDB_URL}/movie/${p.id}?api_key=${API_KEY}&language=es-MX`).then(r => r.json()))
+          peliculasManual.map(p =>
+            fetch(`${TMDB_URL}/movie/${p.id}?api_key=${API_KEY}&language=es-MX`).then(r => r.json())
+          )
         );
 
         allMovies = responses.filter(r => r && r.id);
+        estrenosMovies = allMovies.filter(m => m.release_date && m.release_date.startsWith("2025"));
+
         localStorage.setItem("peliculasCache", JSON.stringify(allMovies));
 
         genresMap.clear();
@@ -402,15 +467,15 @@
         renderTabs();
         renderMovies();
 
-        // 🔍 Buscador funcional
-        inputBuscar.addEventListener('input', () => {
+        inputBuscar.addEventListener("input", () => {
           const q = inputBuscar.value.trim().toLowerCase();
           let list = [];
-          if (currentGenre === "TODAS") list = allMovies;
-          else if (currentGenre === "FAVORITOS") {
+          if (currentGenre === "Todas") list = allMovies;
+          else if (currentGenre === "Favoritos") {
             const favs = getFavorites();
             list = allMovies.filter(m => favs.includes(m.id));
-          } else list = genresMap.get(currentGenre) || [];
+          } else if (currentGenre === "Estrenos 2025") list = estrenosMovies;
+          else list = genresMap.get(currentGenre) || [];
 
           const filtered = q === "" ? list : list.filter(m => m.title.toLowerCase().includes(q));
           const container = document.getElementById("movieContainer");
