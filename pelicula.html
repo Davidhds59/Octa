@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ver película</title>
-
+ <link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
 <script src="https://cdn.jwplayer.com/libraries/IDzF9Zmk.js"></script>
 
 <style>
@@ -241,7 +241,7 @@ async function loadVideo(id, movie){
     autostart:false,
     controls:true,
     playbackRateControls:true,
-    skin:{name:"seven"},
+    skin:{name:"netflix"},
     stretching:"uniform",
     image: movie.backdrop_path ? TMDB_IMG + movie.backdrop_path : ""
   });
