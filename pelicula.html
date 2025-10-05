@@ -17,12 +17,17 @@
       min-height:100vh;
       color:#fff;
       overflow-x:hidden;
+      transition: background 0.5s ease-in-out;
     }
     .overlay{
       background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.95));
       min-height:100vh;
       width:100%;
       padding:20px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      flex-direction:column;
     }
     .container{
       max-width:900px;
@@ -47,13 +52,20 @@
       margin-top:8px;
       font-size:0.9rem;
       color:#ccc;
-    }
-    .rating{
-      display:flex;
       align-items:center;
-      gap:4px;
-      color:#00ff99;
-      font-weight:500;
+    }
+    .rating-circle{
+      width:45px;
+      height:45px;
+      border-radius:50%;
+      background:#0f0;
+      color:#000;
+      font-weight:bold;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-size:0.85rem;
+      box-shadow:0 0 8px rgba(0,255,0,0.5);
     }
     .genres{
       display:flex;
@@ -75,13 +87,28 @@
       font-size:0.95rem;
       line-height:1.5;
     }
-    #player{
+    #player-container{
+      position:relative;
       width:100%;
       aspect-ratio:16/9;
       margin-top:26px;
       border-radius:12px;
       overflow:hidden;
       box-shadow:0 8px 30px rgba(0,0,0,0.7);
+      background:#000;
+    }
+    #player{
+      width:100%;
+      height:100%;
+    }
+    .loading{
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      color:#00ff99;
+      font-weight:bold;
+      font-size:1.1rem;
     }
     .not-found{
       padding:30px;
@@ -93,7 +120,7 @@
 <body>
   <div class="overlay">
     <div class="container" id="movieContainer">
-      <p style="margin-top:40vh;">Cargando película...</p>
+      <p class="loading">Cargando película...</p>
     </div>
   </div>
 
@@ -116,7 +143,6 @@
 
     async function init() {
       try {
-        // 🔹 Cargar información desde TMDb
         const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_KEY}&language=es-MX`);
         const movie = await res.json();
         renderMovie(movie);
@@ -132,8 +158,8 @@
       return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
 
-    function renderMovie(movie) {
-      if (movie.backdrop_path) {
+    function renderMovie(movie){
+      if(movie.backdrop_path){
         document.body.style.backgroundImage = `url(${TMDB_IMG + movie.backdrop_path})`;
       }
 
@@ -144,72 +170,76 @@
         <div class="details">
           <span>📅 ${formatDate(movie.release_date)}</span>
           <span>⏱️ ${movie.runtime || "?"} min</span>
-          <span class="rating">⭐ ${(movie.vote_average * 10).toFixed(0)}%</span>
+          <div class="rating-circle">⭐ ${(movie.vote_average*10).toFixed(0)}%</div>
         </div>
         <div class="genres">
-          ${(movie.genres || []).map(g => `<div class="genre">${g.name}</div>`).join("")}
+          ${(movie.genres || []).map(g=>`<div class="genre">${g.name}</div>`).join("")}
         </div>
         <div class="overview">${movie.overview || "Sin descripción disponible."}</div>
-        <div id="player"></div>
+        <div id="player-container">
+          <div id="player"></div>
+          <div class="loading" id="loading">Cargando video...</div>
+        </div>
       `;
       loadVideo(id);
     }
 
-    async function fileExists(url) {
-      try {
-        const r = await fetch(url, { method: "HEAD" });
+    async function fileExists(url){
+      try{
+        const r = await fetch(url,{method:"HEAD"});
         return r.ok;
-      } catch {
-        return false;
-      }
+      }catch{return false;}
     }
 
-    async function loadVideo(id) {
-      let found = null;
+    async function loadVideo(id){
+      let found=null;
 
-      // 🔹 1️⃣ Buscar enlace en data/enlaces.json
-      try {
+      // 1️⃣ Revisar enlaces.json
+      try{
         const res = await fetch(JSON_PATH);
         const data = await res.json();
-        if (data[id]) found = data[id];
-      } catch (e) {
-        console.warn("No se pudo cargar enlaces.json", e);
-      }
+        if(data[id]) found=data[id];
+      }catch(e){console.warn("No se pudo cargar enlaces.json", e);}
 
-      // 🔹 2️⃣ Si no hay enlace manual, buscar archivo local en /peliculas/
-      if (!found) {
-        for (const ext of FORMATS) {
+      // 2️⃣ Revisar carpeta local
+      if(!found){
+        for(const ext of FORMATS){
           const url = `${window.location.origin}/${VIDEO_FOLDER}/${id}${ext}`;
-          if (await fileExists(url)) {
-            found = url;
+          if(await fileExists(url)){
+            found=url;
             break;
           }
         }
       }
 
-      // 🔹 3️⃣ Mostrar reproductor o aviso
       const playerDiv = document.getElementById("player");
-      playerDiv.innerHTML = ""; // limpiar antes
-
-      if (!found) {
-        playerDiv.innerHTML = `
-          <div class="not-found">🎬 Esta película aún no está disponible.<br>
+      const loadingDiv = document.getElementById("loading");
+      if(!found){
+        loadingDiv.style.display="none";
+        playerDiv.innerHTML = `<div class="not-found">🎬 Esta película aún no está disponible.<br>
           Agrega un enlace en <code>${JSON_PATH}</code> o sube el archivo a <code>/${VIDEO_FOLDER}/${id}.mp4</code>.</div>`;
         return;
       }
 
       console.log("🎥 Enlace de video encontrado:", found);
 
-      // 🔹 4️⃣ Inicializar JWPlayer correctamente
+      // Inicializar JWPlayer
       jwplayer("player").setup({
         file: found,
         type: "mp4",
         width: "100%",
-        aspectratio: "16:9",
-        autostart: false,
-        controls: true,
-        playbackRateControls: true,
-        skin: { name: "seven" },
+        height: "100%",
+        autostart:false,
+        controls:true,
+        playbackRateControls:true,
+        skin:{name:"seven"},
+        stretching:"uniform",
+        image: TMDB_IMG + (id ? `/original` : ""),
+      });
+
+      // Quitar animación cuando JWPlayer esté listo
+      jwplayer("player").on('ready', function(){
+        if(loadingDiv) loadingDiv.style.display="none";
       });
     }
   </script>
