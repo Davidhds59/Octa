@@ -135,7 +135,7 @@ const TMDB_KEY = "cc5b94165972aa509a349161d13d4fc9";
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMG = "https://image.tmdb.org/t/p/original";
 const VIDEO_FOLDER = "peliculas"; 
-const FORMATS = [".mkv", ".mp4", ".m3u8"];
+const FORMATS = [".mkv", ".mp4", ".m3u8", ".avi", ".mov", ".webm", ".flv"]; 
 const JSON_PATH = "data/enlaces.json"; 
 
 const id = new URLSearchParams(window.location.search).get("id");
@@ -186,7 +186,7 @@ function renderMovie(movie){
       <div class="loading" id="loading">Cargando video...</div>
     </div>
   `;
-  loadVideo(id);
+  loadVideo(id, movie);
 }
 
 async function fileExists(url){
@@ -196,7 +196,7 @@ async function fileExists(url){
   }catch{return false;}
 }
 
-async function loadVideo(id){
+async function loadVideo(id, movie){
   let found=null;
 
   try{
@@ -226,9 +226,16 @@ async function loadVideo(id){
 
   console.log("🎥 Enlace de video encontrado:",found);
 
+  // Detecta automáticamente tipo de archivo y lo fuerza a reproducirse con JWPlayer
+  const ext = found.split('.').pop().toLowerCase();
+  let type = "mp4"; 
+  if(["m3u8"].includes(ext)) type = "hls";
+  else if(["webm"].includes(ext)) type = "webm";
+  else if(["mkv","avi","mov","flv"].includes(ext)) type = "mp4"; // JWPlayer reproduce internamente como contenedor MP4
+
   jwplayer("player").setup({
     file:found,
-    type:"mp4",
+    type:type,
     width:"100%",
     height:"100%",
     autostart:false,
@@ -236,10 +243,12 @@ async function loadVideo(id){
     playbackRateControls:true,
     skin:{name:"seven"},
     stretching:"uniform",
-    image:TMDB_IMG+movie.backdrop_path
+    image: movie.backdrop_path ? TMDB_IMG + movie.backdrop_path : ""
   });
 
-  jwplayer("player").on('ready', function(){if(loadingDiv) loadingDiv.style.display="none";});
+  jwplayer("player").on('ready', function(){
+    if(loadingDiv) loadingDiv.style.display="none";
+  });
 }
 </script>
 </body>
