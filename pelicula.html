@@ -1,105 +1,255 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cine Ramírez</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ver película</title>
 
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+<script src="https://cdn.jwplayer.com/libraries/IDzF9Zmk.js"></script>
 
-  <style>
-    body {
-      background: #121212;
-      color: #fff;
-      font-family: 'Roboto', sans-serif;
-    }
-    .movie-card {
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-    .movie-card:hover {
-      transform: scale(1.05);
-    }
-    .movie-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .movie-title {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 10px;
-      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-      color: #fff;
-      font-weight: bold;
-      text-align: center;
-      font-size: 0.9rem;
-    }
-    nav {
-      background: #000;
-    }
-  </style>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif}
+  body{
+    background-color:#000;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    min-height:100vh;
+    color:#fff;
+    overflow-x:hidden;
+    transition: background 0.5s ease-in-out;
+  }
+  .overlay{
+    background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.95));
+    min-height:100vh;
+    width:100%;
+    padding:20px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .container{
+    max-width:900px;
+    margin:auto;
+    text-align:center;
+  }
+  .poster{
+    width:180px;
+    border-radius:16px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.6);
+    margin-top:20px;
+  }
+  h1{
+    font-size:1.2rem;
+    margin-top:14px;
+    font-weight:600;
+  }
+  .details{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    margin-top:8px;
+    font-size:0.9rem;
+    color:#ccc;
+    align-items:center;
+  }
+  .rating-circle{
+    position:relative;
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    background:#081c14;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+    color:#00ff99;
+    font-size:0.85rem;
+  }
+  .rating-circle svg {
+    position:absolute;
+    top:0;
+    left:0;
+    transform:rotate(-90deg);
+  }
+  .genres{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:14px;
+  }
+  .genre{
+    background:#0d1b2a;
+    color:#fff;
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:0.85rem;
+  }
+  .overview{
+    color:#ccc;
+    margin-top:14px;
+    font-size:0.95rem;
+    line-height:1.5;
+  }
+  #player-container{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    margin-top:26px;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 8px 30px rgba(0,0,0,0.7);
+    background:#000;
+  }
+  #player{
+    width:100%;
+    height:100%;
+  }
+  .loading{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    color:#00ff99;
+    font-weight:bold;
+    font-size:1.1rem;
+  }
+  .not-found{
+    padding:30px;
+    text-align:center;
+    color:#bbb;
+  }
+</style>
 </head>
-
 <body>
-  <nav>
-    <div class="nav-wrapper">
-      <a href="#" class="brand-logo center">🎬 Cine Ramírez</a>
-    </div>
-  </nav>
-
-  <div class="container" style="margin-top: 30px;">
-    <div class="row" id="movieContainer"></div>
+<div class="overlay">
+  <div class="container" id="movieContainer">
+    <p class="loading">Cargando película...</p>
   </div>
+</div>
 
-  <script>
-    const API_KEY = "cc5b94165972aa509a349161d13d4fc9";
-    const TMDB_URL = "https://api.themoviedb.org/3";
-    const IMG_URL = "https://image.tmdb.org/t/p/w500";
-    const PLACEHOLDER = "https://via.placeholder.com/500x750?text=No+Image";
+<script>
+const TMDB_KEY = "cc5b94165972aa509a349161d13d4fc9";
+const TMDB_BASE = "https://api.themoviedb.org/3";
+const TMDB_IMG = "https://image.tmdb.org/t/p/original";
+const VIDEO_FOLDER = "peliculas"; 
+const FORMATS = [".mkv", ".mp4", ".m3u8", ".avi", ".mov", ".webm", ".flv"]; 
+const JSON_PATH = "data/enlaces.json"; 
 
-    // 🎬 Lista de IDs TMDb (solo películas)
-    const peliculasManual = [
-      { id: 1083433 }, // Ejemplo: "Smile 2"
-      { id: 1319969 },
-      { id: 1200801 },
-      { id: 1175942 },
-      { id: 744653 },
-      { id: 582927 }
-    ];
+const id = new URLSearchParams(window.location.search).get("id");
 
-    async function loadMovies() {
-      const container = document.getElementById("movieContainer");
-      for (const p of peliculasManual) {
-        try {
-          const res = await fetch(`${TMDB_URL}/movie/${p.id}?api_key=${API_KEY}&language=es-MX`);
-          const data = await res.json();
-          const imgSrc = data.poster_path ? IMG_URL + data.poster_path : PLACEHOLDER;
+if(!id){
+  document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se proporcionó ID de película.</div>`;
+}else{
+  init();
+}
 
-          const col = document.createElement("div");
-          col.classList.add("col", "s6", "m4", "l2");
+async function init(){
+  try{
+    const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_KEY}&language=es-MX`);
+    const movie = await res.json();
+    renderMovie(movie);
+  }catch(e){
+    document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se pudo cargar la información de la película.</div>`;
+  }
+}
 
-          col.innerHTML = `
-            <div class="movie-card" onclick="window.location.href='pelicula.html?id=${data.id}'">
-              <img src="${imgSrc}" alt="${data.title}">
-              <div class="movie-title">${data.title}</div>
-            </div>
-          `;
-          container.appendChild(col);
-        } catch (err) {
-          console.error("Error cargando película:", err);
-        }
+function formatDate(d){if(!d) return "Desconocida"; const parts=d.split("-"); return `${parts[2]}/${parts[1]}/${parts[0]}`;}
+
+function renderMovie(movie){
+  if(movie.backdrop_path){
+    document.body.style.backgroundImage=`url(${TMDB_IMG + movie.backdrop_path})`;
+  }
+
+  const container=document.getElementById("movieContainer");
+  const rating=Math.round(movie.vote_average*10);
+  container.innerHTML=`
+    <img src="${TMDB_IMG + movie.poster_path}" class="poster">
+    <h1>${movie.title}</h1>
+    <div class="details">
+      <span>📅 ${formatDate(movie.release_date)}</span>
+      <span>⏱️ ${movie.runtime || "?"} min</span>
+      <div class="rating-circle">
+        <svg width="50" height="50">
+          <circle cx="25" cy="25" r="20" stroke="#004d00" stroke-width="5" fill="none"/>
+          <circle cx="25" cy="25" r="20" stroke="#00ff99" stroke-width="5" fill="none" stroke-dasharray="125.6" stroke-dashoffset="${125.6 - (125.6*rating/100)}" style="transition: stroke-dashoffset 1s ease"/>
+        </svg>
+        ${rating}%
+      </div>
+    </div>
+    <div class="genres">${(movie.genres || []).map(g=>`<div class="genre">${g.name}</div>`).join("")}</div>
+    <div class="overview">${movie.overview || "Sin descripción disponible."}</div>
+    <div id="player-container">
+      <div id="player"></div>
+      <div class="loading" id="loading">Cargando video...</div>
+    </div>
+  `;
+  loadVideo(id, movie);
+}
+
+async function fileExists(url){
+  try{
+    const r=await fetch(url,{method:"HEAD"});
+    return r.ok;
+  }catch{return false;}
+}
+
+async function loadVideo(id, movie){
+  let found=null;
+
+  try{
+    const res=await fetch(JSON_PATH);
+    const data=await res.json();
+    if(data[id]) found=data[id];
+  }catch(e){console.warn("No se pudo cargar enlaces.json", e);}
+
+  if(!found){
+    for(const ext of FORMATS){
+      const url=`${window.location.origin}/${VIDEO_FOLDER}/${id}${ext}`;
+      if(await fileExists(url)){
+        found=url;
+        break;
       }
     }
+  }
 
-    loadMovies();
-  </script>
+  const playerDiv=document.getElementById("player");
+  const loadingDiv=document.getElementById("loading");
+  if(!found){
+    loadingDiv.style.display="none";
+    playerDiv.innerHTML=`<div class="not-found">🎬 Esta película aún no está disponible.<br>
+      Agrega un enlace en <code>${JSON_PATH}</code> o sube el archivo a <code>/${VIDEO_FOLDER}/${id}.mp4</code>.</div>`;
+    return;
+  }
+
+  console.log("🎥 Enlace de video encontrado:",found);
+
+  // Detecta automáticamente tipo de archivo y lo fuerza a reproducirse con JWPlayer
+  const ext = found.split('.').pop().toLowerCase();
+  let type = "mp4"; 
+  if(["m3u8"].includes(ext)) type = "hls";
+  else if(["webm"].includes(ext)) type = "webm";
+  else if(["mkv","avi","mov","flv"].includes(ext)) type = "mp4"; // JWPlayer reproduce internamente como contenedor MP4
+
+  jwplayer("player").setup({
+    file:found,
+    type:type,
+    width:"100%",
+    height:"100%",
+    autostart:false,
+    controls:true,
+    playbackRateControls:true,
+    skin:{name:"seven"},
+    stretching:"uniform",
+    image: movie.backdrop_path ? TMDB_IMG + movie.backdrop_path : ""
+  });
+
+  jwplayer("player").on('ready', function(){
+    if(loadingDiv) loadingDiv.style.display="none";
+  });
+}
+</script>
 </body>
 </html>
