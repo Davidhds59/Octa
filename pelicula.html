@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ver película</title>
- <link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
+<link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
 <script src="https://cdn.jwplayer.com/libraries/IDzF9Zmk.js"></script>
+
+<!-- Google Cast Sender SDK (necesario para abrir el diálogo de Cast) -->
+<script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 
 <style>
   *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif}
@@ -19,108 +22,62 @@
     overflow-x:hidden;
     transition: background 0.5s ease-in-out;
   }
-  .overlay{
-    background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.95));
-    min-height:100vh;
-    width:100%;
-    padding:20px;
+  .overlay{background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.95));min-height:100vh;width:100%;padding:20px;display:flex;justify-content:center;align-items:flex-start;flex-direction:column;}
+  .container{max-width:900px;margin:auto;text-align:center;}
+  .poster{width:180px;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.6);margin-top:20px;}
+  h1{font-size:1.2rem;margin-top:14px;font-weight:600;}
+  .details{display:flex;justify-content:center;gap:14px;margin-top:8px;font-size:0.9rem;color:#ccc;align-items:center;}
+  .rating-circle{position:relative;width:50px;height:50px;border-radius:50%;background:#081c14;display:flex;justify-content:center;align-items:center;font-weight:bold;color:#00ff99;font-size:0.85rem;}
+  .rating-circle svg {position:absolute;top:0;left:0;transform:rotate(-90deg);}
+  .genres{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:14px;}
+  .genre{background:#0d1b2a;color:#fff;padding:6px 14px;border-radius:20px;font-size:0.85rem;}
+  .overview{color:#ccc;margin-top:14px;font-size:0.6rem;line-height:1.5;}
+  #player-container{position:relative;width:100%;aspect-ratio:16/9;margin-top:26px;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.7);background:#000;}
+  #player{width:100%;height:100%;}
+  .loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#00ff99;font-weight:bold;font-size:1.1rem;}
+  .not-found{padding:30px;text-align:center;color:#bbb;}
+  /* Overlay de "Continuar" sobre el player */
+  .resume-overlay{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,0,0.7));
     display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    flex-direction:column;
-  }
-  .container{
-    max-width:900px;
-    margin:auto;
-    text-align:center;
-  }
-  .poster{
-    width:180px;
-    border-radius:16px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.6);
-    margin-top:20px;
-  }
-  h1{
-    font-size:1.2rem;
-    margin-top:14px;
-    font-weight:600;
-  }
-  .details{
-    display:flex;
+    align-items:center;
     justify-content:center;
     gap:14px;
-    margin-top:8px;
-    font-size:0.9rem;
-    color:#ccc;
-    align-items:center;
-  }
-  .rating-circle{
-    position:relative;
-    width:50px;
-    height:50px;
-    border-radius:50%;
-    background:#081c14;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-weight:bold;
-    color:#00ff99;
-    font-size:0.85rem;
-  }
-  .rating-circle svg {
-    position:absolute;
-    top:0;
-    left:0;
-    transform:rotate(-90deg);
-  }
-  .genres{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-top:14px;
-  }
-  .genre{
-    background:#0d1b2a;
-    color:#fff;
-    padding:6px 14px;
-    border-radius:20px;
-    font-size:0.85rem;
-  }
-  .overview{
-    color:#ccc;
-    margin-top:14px;
-    font-size:0.6rem;
-    line-height:1.5;
-  }
-  #player-container{
-    position:relative;
-    width:100%;
-    aspect-ratio:16/9;
-    margin-top:26px;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 8px 30px rgba(0,0,0,0.7);
-    background:#000;
-  }
-  #player{
-    width:100%;
-    height:100%;
-  }
-  .loading{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    color:#00ff99;
-    font-weight:bold;
-    font-size:1.1rem;
-  }
-  .not-found{
-    padding:30px;
+    z-index:30;
+    flex-direction:column;
+    padding:18px;
     text-align:center;
-    color:#bbb;
   }
+  .resume-card{
+    background:rgba(10,10,10,0.85);
+    border-radius:10px;
+    padding:14px 18px;
+    max-width:420px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6);
+    color:#fff;
+  }
+  .resume-btn{background:#00ff99;border:none;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer;margin-top:8px;}
+  .resume-btn.secondary{background:transparent;border:1px solid #fff;color:#fff;margin-left:8px;}
+  /* Estilo para botón cast personalizado dentro del player (si JW no lo muestra) */
+  .jw-cast-forced {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    z-index: 40;
+    width: 40px;
+    height: 40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:6px;
+    background: rgba(0,0,0,0.45);
+    cursor: pointer;
+  }
+  .jw-cast-forced svg{width:20px;height:20px;fill:#fff}
+  /* Pequeña animación al mostrar badge de guardado */
+  .saved-badge{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,0.6);padding:6px 10px;border-radius:999px;font-size:12px;color:#bfe9c9;z-index:40;}
 </style>
 </head>
 <body>
@@ -131,15 +88,40 @@
 </div>
 
 <script>
+/* ---------------------------
+  CONFIG y CONSTANTES
+----------------------------*/
 const TMDB_KEY = "cc5b94165972aa509a349161d13d4fc9";
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMG = "https://image.tmdb.org/t/p/original";
-const VIDEO_FOLDER = "peliculas"; 
-const FORMATS = [".mkv", ".mp4", ".m3u8", ".avi", ".mov", ".webm", ".flv"]; 
-const JSON_PATH = "data/enlaces.json"; 
+const VIDEO_FOLDER = "peliculas";
+const FORMATS = [".mkv", ".mp4", ".m3u8", ".avi", ".mov", ".webm", ".flv"];
+const JSON_PATH = "data/enlaces.json";
 
 const id = new URLSearchParams(window.location.search).get("id");
+const RESUME_KEY_PREFIX = "movie_resume_"; // clave localStorage prefix
+const RESUME_SAVE_INTERVAL = 5; // segundos entre guardados (aprox)
+const MIN_SECONDS_TO_PROMPT = 5; // si salvó > MIN_SECONDS_TO_PROMPT, preguntar
+const PROMPT_THRESHOLD = 60; // si la posición guardada es mayor a este umbral (segundos), mostrar "Continuar desde"
 
+// Opcional: URL raw de tu JSON en GitHub (sustituye por tu repo una vez subido)
+const GITHUB_RAW_CONFIG = "https://raw.githubusercontent.com/USUARIO/REPO/main/cast_config.json";
+
+/* ---------------------------
+  FUNCIONES AUX y UI
+----------------------------*/
+function formatDate(d){ if(!d) return "Desconocida"; const parts=d.split("-"); return `${parts[2]}/${parts[1]}/${parts[0]}`; }
+function secToTime(secs){
+  if(!secs) return "0:00";
+  const s = Math.floor(secs % 60).toString().padStart(2,"0");
+  const m = Math.floor(secs/60);
+  return `${m}:${s}`;
+}
+function getResumeKey(movieId){ return RESUME_KEY_PREFIX + movieId; }
+
+/* ---------------------------
+  CARGA PELÍCULA y PLAYER
+----------------------------*/
 if(!id){
   document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se proporcionó ID de película.</div>`;
 }else{
@@ -152,11 +134,10 @@ async function init(){
     const movie = await res.json();
     renderMovie(movie);
   }catch(e){
+    console.error(e);
     document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se pudo cargar la información de la película.</div>`;
   }
 }
-
-function formatDate(d){if(!d) return "Desconocida"; const parts=d.split("-"); return `${parts[2]}/${parts[1]}/${parts[0]}`;}
 
 function renderMovie(movie){
   if(movie.backdrop_path){
@@ -164,7 +145,7 @@ function renderMovie(movie){
   }
 
   const container=document.getElementById("movieContainer");
-  const rating=Math.round(movie.vote_average*10);
+  const rating=Math.round((movie.vote_average || 0)*10);
   container.innerHTML=`
     <img src="${TMDB_IMG + movie.poster_path}" class="poster">
     <h1>${movie.title}</h1>
@@ -189,34 +170,34 @@ function renderMovie(movie){
   loadVideo(id, movie);
 }
 
+/* Comprueba existencia por HEAD */
 async function fileExists(url){
   try{
-    const r=await fetch(url,{method:"HEAD"});
+    const r = await fetch(url, { method: "HEAD" });
     return r.ok;
-  }catch{return false;}
+  }catch(e){ return false; }
 }
 
 async function loadVideo(id, movie){
-  let found=null;
-
+  let found = null;
   try{
-    const res=await fetch(JSON_PATH);
-    const data=await res.json();
-    if(data[id]) found=data[id];
-  }catch(e){console.warn("No se pudo cargar enlaces.json", e);}
+    const res = await fetch(JSON_PATH);
+    const data = await res.json();
+    if(data[id]) found = data[id];
+  }catch(e){ console.warn("No se pudo cargar enlaces.json", e); }
 
   if(!found){
     for(const ext of FORMATS){
-      const url=`${window.location.origin}/${VIDEO_FOLDER}/${id}${ext}`;
+      const url = `${window.location.origin}/${VIDEO_FOLDER}/${id}${ext}`;
       if(await fileExists(url)){
-        found=url;
+        found = url;
         break;
       }
     }
   }
 
-  const playerDiv=document.getElementById("player");
-  const loadingDiv=document.getElementById("loading");
+  const playerDiv = document.getElementById("player");
+  const loadingDiv = document.getElementById("loading");
   if(!found){
     loadingDiv.style.display="none";
     playerDiv.innerHTML=`<div class="not-found">🎬 Esta película aún no está disponible.<br>
@@ -224,63 +205,320 @@ async function loadVideo(id, movie){
     return;
   }
 
-  console.log("🎥 Enlace de video encontrado:",found);
+  console.log("🎥 Enlace de video encontrado:", found);
 
-  // Detecta automáticamente tipo de archivo y lo fuerza a reproducirse con JWPlayer
+  // Detecta tipo
   const ext = found.split('.').pop().toLowerCase();
-  let type = "mp4"; 
+  let type = "mp4";
   if(["m3u8"].includes(ext)) type = "hls";
   else if(["webm"].includes(ext)) type = "webm";
-  else if(["mkv","avi","mov","flv"].includes(ext)) type = "mp4"; // JWPlayer reproduce internamente como contenedor MP4
+  else if(["mkv","avi","mov","flv"].includes(ext)) type = "mp4";
 
+  // Config JWPlayer
   jwplayer("player").setup({
-    file:found,
-    type:type,
-    width:"100%",
-    height:"100%",
-    autostart:false,
-    controls:true,
-    playbackRateControls:true,
-    skin:{name:"netflix"},
-    stretching:"uniform",
+    file: found,
+    type: type,
+    width: "100%",
+    height: "100%",
+    autostart: false,
+    controls: true,
+    playbackRateControls: true,
+    skin: { name: "netflix" },
+    stretching: "uniform",
     image: movie.backdrop_path ? TMDB_IMG + movie.backdrop_path : "",
-   mute:false
+    mute: false,
+    // forzar cast: JW player puede mostrar el icono de cast si soporta; igual añadiremos botón propio
+    // cast: {} // no forzamos aquí, usaremos la API de Cast por separado
   });
+
+  // Añadir botón "Forzar Chromecast" encima del player (si JW no muestra)
+  addForcedCastButton();
+
+  // Lógica de reanudar guardado
+  setupResumeBehavior(id);
 
   jwplayer("player").on('ready', function(){
     if(loadingDiv) loadingDiv.style.display="none";
+    // Cuando listo, comprobar si hay resume guardado
+    showResumeOverlayIfNeeded(id);
+    // Añadir botón en barra de JW (opcional) - icono pequeño
+    try{
+      jwplayer().addButton(
+        'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23FFFFFF" d="M1 18h2v3h18v-3h2v5H1v-5zm15-8l-6 4V6l6 4zM3 6h10V4H3v2z"/></svg>',
+        'Cast a TV',
+        () => { startCastFlow(found, movie); },
+        'btn_cast_custom'
+      );
+    }catch(e){ /* ignore if jw doesn't allow */ }
+    // Badge de guardado
+    showSavedBadge(false);
+  });
+
+  // Guardar posición periódicamente (cada RESUME_SAVE_INTERVAL segundos de reproducción)
+  let lastSaveTime = 0;
+  jwplayer("player").on('time', function(evt){
+    const pos = Math.floor(evt.position || 0);
+    // Guardar cada RESUME_SAVE_INTERVAL segundos
+    if(pos - lastSaveTime >= RESUME_SAVE_INTERVAL){
+      lastSaveTime = pos;
+      saveResumePosition(id, pos);
+      showSavedBadge(true);
+      setTimeout(()=> showSavedBadge(false), 1200);
+    }
+  });
+
+  jwplayer("player").on('complete', function(){
+    // Al terminar, borrar el resume para que no ofrezca a reanudar
+    clearResumePosition(id);
+    showSavedBadge(false);
+  });
+
+  // Cuando se pausa, guardar
+  jwplayer("player").on('pause', function(){
+    const pos = Math.floor(jwplayer().getPosition() || 0);
+    saveResumePosition(id, pos);
+  });
+
+  // Mostrar overlay de continuar si el usuario vuelve
+}
+
+/* ---------------------------
+  FUNCIONES DE RESUME (localStorage)
+----------------------------*/
+function saveResumePosition(movieId, seconds){
+  try{
+    const key = getResumeKey(movieId);
+    const payload = { pos: Math.floor(seconds), ts: Date.now() };
+    localStorage.setItem(key, JSON.stringify(payload));
+    // console.log("Guardado resume:", payload);
+  }catch(e){ console.warn("No se pudo guardar resume", e); }
+}
+function getResumePosition(movieId){
+  try{
+    const key = getResumeKey(movieId);
+    const raw = localStorage.getItem(key);
+    if(!raw) return null;
+    const obj = JSON.parse(raw);
+    return obj.pos || 0;
+  }catch(e){ return null; }
+}
+function clearResumePosition(movieId){
+  try{
+    localStorage.removeItem(getResumeKey(movieId));
+  }catch(e){}
+}
+
+/* ---------------------------
+  OVERLAY "CONTINUAR" DENTRO DEL PLAYER
+----------------------------*/
+function showResumeOverlayIfNeeded(movieId){
+  const saved = getResumePosition(movieId);
+  if(!saved || saved < MIN_SECONDS_TO_PROMPT) return;
+  // Si guardó menos que PROMPT_THRESHOLD segundos podemos aún ofrecer, adaptado a tu petición: "última minuto donde se quedó"
+  // Mostramos overlay si saved > MIN_SECONDS_TO_PROMPT
+  const playerContainer = document.getElementById("player-container");
+  // Si ya existe, no replicar
+  if(document.getElementById("resume-overlay")) return;
+
+  const overlay = document.createElement("div");
+  overlay.id = "resume-overlay";
+  overlay.className = "resume-overlay";
+  overlay.innerHTML = `
+    <div class="resume-card">
+      <div style="font-size:14px;">Parece que estabas en <strong>${secToTime(saved)}</strong></div>
+      <div style="margin-top:8px;font-size:13px;color:#cfcfcf;">¿Quieres continuar desde ahí o empezar desde el principio?</div>
+      <div style="margin-top:12px;">
+        <button id="resume-continue" class="resume-btn">Continuar desde ${secToTime(saved)}</button>
+        <button id="resume-restart" class="resume-btn secondary">Empezar desde el principio</button>
+      </div>
+    </div>
+  `;
+  playerContainer.appendChild(overlay);
+
+  document.getElementById("resume-continue").addEventListener("click", ()=>{
+    // esconder overlay y hacer seek
+    overlay.remove();
+    try{ jwplayer().seek(saved); jwplayer().play(); }catch(e){ console.warn(e); }
+  });
+  document.getElementById("resume-restart").addEventListener("click", ()=>{
+    overlay.remove();
+    try{ jwplayer().seek(0); jwplayer().play(); clearResumePosition(movieId); }catch(e){ console.warn(e); }
   });
 }
-</script>
- <script>
 
- // URL del enlace que se abrirá en la ventana emergente
+/* ---------------------------
+  BADGE "Guardado"
+----------------------------*/
+function showSavedBadge(show){
+  let badge = document.getElementById("saved-badge");
+  const pc = document.getElementById("player-container");
+  if(!badge){
+    badge = document.createElement("div");
+    badge.id = "saved-badge";
+    badge.className = "saved-badge";
+    badge.textContent = "Progreso guardado";
+    pc.appendChild(badge);
+  }
+  badge.style.display = show ? "block" : "none";
+}
 
-    var enlace = "https://otieu.com/4/8675778";
+/* ---------------------------
+  BOTÓN CAST FORZADO (UI) + INTEGRACIÓN CAST
+----------------------------*/
+function addForcedCastButton(){
+  const pc = document.getElementById("player-container");
+  // no duplicar
+  if(document.getElementById("jw-cast-forced")) return;
+  const btn = document.createElement("div");
+  btn.id = "jw-cast-forced";
+  btn.className = "jw-cast-forced";
+  btn.title = "Transmitir a TV";
+  btn.innerHTML = `
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1 18h2v3h18v-3h2v5H1v-5zm15-8l-6 4V6l6 4zM3 6h10V4H3v2z"/>
+    </svg>
+  `;
+  btn.addEventListener("click", async (e)=>{
+    // intenta iniciar flujo de cast
+    const file = jwplayer().getPlaylistItem() && jwplayer().getPlaylistItem().file;
+    const title = jwplayer().getPlaylistItem() && (jwplayer().getPlaylistItem().title || document.querySelector("h1")?.textContent);
+    const poster = jwplayer().getPlaylistItem() && jwplayer().getPlaylistItem().image;
+    await startCastFlow(file, { title: title || document.title, image: poster });
+  });
+  pc.appendChild(btn);
+}
 
-    // Contador de clics
-
-    var contadorClics = 0;
-
-    // Función para abrir la ventana emergente solo en el primer clic
-
-    function abrirVentanaEmergente() {
-
-      if (contadorClics === 0) {
-
-        window.open(enlace, "_blank", "width=500,height=500");
-
-        contadorClics++;
-
-      }
-
+/* Inicialización básica del framework de Cast. */
+function ensureCastInitialized(){
+  try{
+    if(window.cast && window.cast.framework){
+      const options = {
+        receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+        autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+      };
+      cast.framework.CastContext.getInstance().setOptions(options);
+      return true;
+    }else{
+      console.warn("Cast framework no disponible aún.");
+      return false;
     }
+  }catch(e){
+    console.warn("Error init cast", e);
+    return false;
+  }
+}
 
-    // Evento para detectar el clic en cualquier parte de la página
+/**
+ * startCastFlow(fileUrl, meta)
+ * - fileUrl: URL al recurso multimedia
+ * - meta: { title, description, image }
+ */
+async function startCastFlow(fileUrl, meta){
+  if(!fileUrl){
+    alert("No se ha encontrado URL de video para transmitir.");
+    return;
+  }
+  // Intentar cargar configuración desde GitHub (si existe) para obtener receiverApplicationId
+  let receiverAppId = chrome?.cast?.media?.DEFAULT_MEDIA_RECEIVER_APP_ID || 'CC1AD845'; // fallback
+  try{
+    const resp = await fetch(GITHUB_RAW_CONFIG);
+    if(resp.ok){
+      const cfg = await resp.json();
+      if(cfg && cfg.receiverApplicationId) receiverAppId = cfg.receiverApplicationId;
+      console.log("Cast config loaded from GitHub raw:", cfg);
+    }else{
+      // no fatal: seguimos con default
+    }
+  }catch(e){ console.warn("No se pudo cargar config de GitHub:", e); }
 
-    document.addEventListener("click", abrirVentanaEmergente); 
-    
+  // Initialize cast framework with chosen app id
+  try{
+    if(!ensureCastInitialized()){
+      // Retry setting options if not available yet
+      if(window.cast && window.cast.framework){
+        cast.framework.CastContext.getInstance().setOptions({
+          receiverApplicationId: receiverAppId,
+          autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+        });
+      } else {
+        // esperar un momento a que el SDK cargue
+      }
+    }
+  }catch(e){
+    console.warn("No se pudo configurar CastContext:", e);
+  }
 
+  // Abrir dialogo de selección de dispositivo
+  try{
+    const context = cast.framework.CastContext.getInstance();
+    context.requestSession()
+    .then(async ()=> {
+      const session = context.getCurrentSession();
+      if(!session){
+        alert("No se pudo iniciar la sesión de Cast.");
+        return;
+      }
+      // Preparar media info
+      const mediaInfo = new chrome.cast.media.MediaInfo(fileUrl, getMimeTypeFromUrl(fileUrl));
+      mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
+      if(meta && meta.title) mediaInfo.metadata.title = meta.title;
+      if(meta && meta.image) mediaInfo.metadata.images = [{ url: meta.image }];
+      // Cargar
+      const request = new chrome.cast.media.LoadRequest(mediaInfo);
+      session.loadMedia(request).then(
+        () => { console.log("Media cargada en TV"); },
+        (err) => { console.error("Error al cargar media en TV", err); alert("No se pudo transmitir: " + (err && err.description)); }
+      );
+    })
+    .catch((err) => {
+      console.warn("requestSession error", err);
+      alert("No se pudo iniciar la comunicación con el dispositivo Cast.");
+    });
+  }catch(err){
+    console.error("Error durante flujo de Cast:", err);
+    alert("Tu navegador o dispositivo no soporta la funcionalidad de Chromecast desde esta página.");
+  }
+}
+
+/* Determina mime type básico según extensión */
+function getMimeTypeFromUrl(url){
+  const ext = (url.split('.').pop() || "").toLowerCase();
+  if(ext === "m3u8") return "application/vnd.apple.mpegurl";
+  if(ext === "mpd") return "application/dash+xml";
+  if(ext === "mp4") return "video/mp4";
+  if(ext === "webm") return "video/webm";
+  return "video/*";
+}
+
+/* ---------------------------
+  CARGA CONFIG JSON EJEMPLO (para GitHub)
+----------------------------*/
+/* Ejemplo de JSON (guárdalo como cast_config.json en tu repo):
+{
+  "receiverApplicationId": "CC1AD845", 
+  "notes": "receiverApplicationId puede ser DEFAULT_MEDIA_RECEIVER_APP_ID o tu propio app id registrado."
+}
+*/
+// El código ya intenta cargar GITHUB_RAW_CONFIG; cámbialo al raw URL real cuando subas el archivo.
+
+/* ---------------------------
+  UTIL: Establecer comportamiento de reanudar (por seguridad al inicio)
+----------------------------*/
+function setupResumeBehavior(movieId){
+  // Si hay resume muy reciente, mostramos overlay al ready (lo maneja showResumeOverlayIfNeeded)
+  // También permitimos que el usuario haga "seek" y se guarde la nueva posición (jwplayer events arriba)
+}
+
+/* ---------------------------
+  INSTRUCCIONES RÁPIDAS para subir JSON a GitHub:
+  1) Crea un repo (o usa uno existente).
+  2) Añade un archivo llamado `cast_config.json` en la raíz con este contenido:
+     {
+       "receiverApplicationId": "CC1AD845"
+     }
+  3) Pulsa "Commit" y luego ve a la vista del archivo > "Raw" y copia la URL raw (ej: https://raw.githubusercontent.com/USUARIO/REPO/main/cast_config.json)
+  4) Sustituye la constante GITHUB_RAW_CONFIG por esa URL en este archivo.
+----------------------------*/
 </script>
 </body>
 </html>
