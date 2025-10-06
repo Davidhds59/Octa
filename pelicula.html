@@ -4,36 +4,152 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ver película</title>
-<link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
+ <link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
 <script src="https://cdn.jwplayer.com/libraries/IDzF9Zmk.js"></script>
-
-<!-- Google Cast Sender SDK -->
-<script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 
 <style>
   *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif}
-  body{background-color:#000;background-size:cover;background-position:center;background-repeat:no-repeat;min-height:100vh;color:#fff;overflow-x:hidden;transition: background 0.5s ease-in-out;}
-  .overlay{background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.95));min-height:100vh;width:100%;padding:20px;display:flex;justify-content:center;align-items:flex-start;flex-direction:column;}
-  .container{max-width:900px;margin:auto;text-align:center;}
-  .poster{width:180px;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.6);margin-top:20px;}
-  h1{font-size:1.2rem;margin-top:14px;font-weight:600;}
-  .details{display:flex;justify-content:center;gap:14px;margin-top:8px;font-size:0.9rem;color:#ccc;align-items:center;}
-  .rating-circle{position:relative;width:50px;height:50px;border-radius:50%;background:#081c14;display:flex;justify-content:center;align-items:center;font-weight:bold;color:#00ff99;font-size:0.85rem;}
-  .rating-circle svg {position:absolute;top:0;left:0;transform:rotate(-90deg);}
-  .genres{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:14px;}
-  .genre{background:#0d1b2a;color:#fff;padding:6px 14px;border-radius:20px;font-size:0.85rem;}
-  .overview{color:#ccc;margin-top:14px;font-size:0.6rem;line-height:1.5;}
-  #player-container{position:relative;width:100%;aspect-ratio:16/9;margin-top:26px;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.7);background:#000;}
-  #player{width:100%;height:100%;}
-  .loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#00ff99;font-weight:bold;font-size:1.1rem;}
-  .not-found{padding:30px;text-align:center;color:#bbb;}
-  .resume-overlay{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,0,0.7));display:flex;align-items:center;justify-content:center;gap:14px;z-index:30;flex-direction:column;padding:18px;text-align:center;}
-  .resume-card{background:rgba(10,10,10,0.85);border-radius:10px;padding:14px 18px;max-width:420px;box-shadow:0 8px 30px rgba(0,0,0,0.6);color:#fff;}
-  .resume-btn{background:#00ff99;border:none;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer;margin-top:8px;}
-  .resume-btn.secondary{background:transparent;border:1px solid #fff;color:#fff;margin-left:8px;}
-  .jw-cast-forced{position:absolute;right:12px;top:12px;z-index:40;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(0,0,0,0.45);cursor:pointer;}
-  .jw-cast-forced svg{width:20px;height:20px;fill:#fff}
-  .saved-badge{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,0.6);padding:6px 10px;border-radius:999px;font-size:12px;color:#bfe9c9;z-index:40;}
+  body{
+    background-color:#000;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    min-height:100vh;
+    color:#fff;
+    overflow-x:hidden;
+    transition: background 0.5s ease-in-out;
+  }
+  .overlay{
+    background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.95));
+    min-height:100vh;
+    width:100%;
+    padding:20px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .container{
+    max-width:900px;
+    margin:auto;
+    text-align:center;
+  }
+  .poster{
+    width:180px;
+    border-radius:16px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.6);
+    margin-top:20px;
+  }
+  h1{
+    font-size:1.2rem;
+    margin-top:14px;
+    font-weight:600;
+  }
+  .details{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    margin-top:8px;
+    font-size:0.9rem;
+    color:#ccc;
+    align-items:center;
+  }
+  .rating-circle{
+    position:relative;
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    background:#081c14;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+    color:#00ff99;
+    font-size:0.85rem;
+  }
+  .rating-circle svg {
+    position:absolute;
+    top:0;
+    left:0;
+    transform:rotate(-90deg);
+  }
+  .genres{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:14px;
+  }
+  .genre{
+    background:#0d1b2a;
+    color:#fff;
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:0.85rem;
+  }
+  .overview{
+    color:#ccc;
+    margin-top:14px;
+    font-size:0.6rem;
+    line-height:1.5;
+  }
+  #player-container{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    margin-top:26px;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 8px 30px rgba(0,0,0,0.7);
+    background:#000;
+  }
+  #player{
+    width:100%;
+    height:100%;
+  }
+  .loading{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    color:#00ff99;
+    font-weight:bold;
+    font-size:1.1rem;
+  }
+  .not-found{
+    padding:30px;
+    text-align:center;
+    color:#bbb;
+  }
+
+  /* 🔹 Overlay dentro del reproductor */
+  .resume-overlay {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.75);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:999;
+  }
+  .resume-overlay button {
+    background:#00ff99;
+    color:#000;
+    font-weight:bold;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    margin:8px;
+    cursor:pointer;
+    transition:background 0.3s;
+  }
+  .resume-overlay button:hover {
+    background:#00cc7a;
+  }
 </style>
 </head>
 <body>
@@ -47,144 +163,153 @@
 const TMDB_KEY = "cc5b94165972aa509a349161d13d4fc9";
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMG = "https://image.tmdb.org/t/p/original";
-const VIDEO_FOLDER = "peliculas";
-const FORMATS = [".mkv", ".mp4", ".m3u8", ".avi", ".mov", ".webm", ".flv"];
-const JSON_PATH = "data/enlaces.json";
+const VIDEO_FOLDER = "peliculas"; 
+const FORMATS = [".mkv", ".mp4", ".m3u8", ".avi", ".mov", ".webm", ".flv"]; 
+const JSON_PATH = "data/enlaces.json"; 
+
 const id = new URLSearchParams(window.location.search).get("id");
-const RESUME_KEY_PREFIX = "movie_resume_";
-const RESUME_SAVE_INTERVAL = 5;
-const MIN_SECONDS_TO_PROMPT = 5;
-const PROMPT_THRESHOLD = 60;
-const GITHUB_RAW_CONFIG = "https://raw.githubusercontent.com/Davidhds59/Octa/refs/heads/main/cast_config.json";
 
-function formatDate(d){if(!d)return"Desconocida";const p=d.split("-");return`${p[2]}/${p[1]}/${p[0]}`;}
-function secToTime(secs){if(!secs)return"0:00";const s=Math.floor(secs%60).toString().padStart(2,"0");const m=Math.floor(secs/60);return`${m}:${s}`;}
-function getResumeKey(movieId){return RESUME_KEY_PREFIX+movieId;}
-
-if(!id){document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se proporcionó ID de película.</div>`;}else{init();}
+if(!id){
+  document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se proporcionó ID de película.</div>`;
+}else{
+  init();
+}
 
 async function init(){
   try{
-    const res=await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_KEY}&language=es-MX`);
-    const movie=await res.json();
+    const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_KEY}&language=es-MX`);
+    const movie = await res.json();
     renderMovie(movie);
   }catch(e){
-    console.error(e);
     document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se pudo cargar la información de la película.</div>`;
   }
 }
 
+function formatDate(d){if(!d) return "Desconocida"; const parts=d.split("-"); return `${parts[2]}/${parts[1]}/${parts[0]}`;}
+
 function renderMovie(movie){
-  if(movie.backdrop_path){document.body.style.backgroundImage=`url(${TMDB_IMG+movie.backdrop_path})`;}
-  const c=document.getElementById("movieContainer");
-  const rating=Math.round((movie.vote_average||0)*10);
-  c.innerHTML=`
-    <img src="${TMDB_IMG+movie.poster_path}" class="poster">
+  if(movie.backdrop_path){
+    document.body.style.backgroundImage=`url(${TMDB_IMG + movie.backdrop_path})`;
+  }
+
+  const container=document.getElementById("movieContainer");
+  const rating=Math.round(movie.vote_average*10);
+  container.innerHTML=`
+    <img src="${TMDB_IMG + movie.poster_path}" class="poster">
     <h1>${movie.title}</h1>
     <div class="details">
       <span>📅 ${formatDate(movie.release_date)}</span>
-      <span>⏱️ ${movie.runtime||"?"} min</span>
+      <span>⏱️ ${movie.runtime || "?"} min</span>
       <div class="rating-circle">
         <svg width="50" height="50">
           <circle cx="25" cy="25" r="20" stroke="#004d00" stroke-width="5" fill="none"/>
-          <circle cx="25" cy="25" r="20" stroke="#00ff99" stroke-width="5" fill="none" stroke-dasharray="125.6" stroke-dashoffset="${125.6-(125.6*rating/100)}" style="transition:stroke-dashoffset 1s ease"/>
-        </svg>${rating}%
+          <circle cx="25" cy="25" r="20" stroke="#00ff99" stroke-width="5" fill="none" stroke-dasharray="125.6" stroke-dashoffset="${125.6 - (125.6*rating/100)}" style="transition: stroke-dashoffset 1s ease"/>
+        </svg>
+        ${rating}%
       </div>
     </div>
-    <div class="genres">${(movie.genres||[]).map(g=>`<div class="genre">${g.name}</div>`).join("")}</div>
-    <div class="overview">${movie.overview||"Sin descripción disponible."}</div>
-    <div id="player-container"><div id="player"></div><div class="loading" id="loading">Cargando video...</div></div>
+    <div class="genres">${(movie.genres || []).map(g=>`<div class="genre">${g.name}</div>`).join("")}</div>
+    <div class="overview">${movie.overview || "Sin descripción disponible."}</div>
+    <div id="player-container">
+      <div id="player"></div>
+      <div class="loading" id="loading">Cargando video...</div>
+    </div>
   `;
-  loadVideo(id,movie);
+  loadVideo(id, movie);
 }
 
-async function fileExists(url){try{const r=await fetch(url,{method:"HEAD"});return r.ok;}catch(e){return false;}}
-async function loadVideo(id,movie){
-  let found=null;
-  try{const res=await fetch(JSON_PATH);const data=await res.json();if(data[id])found=data[id];}catch(e){console.warn("No se pudo cargar enlaces.json",e);}
-  if(!found){for(const ext of FORMATS){const url=`${window.location.origin}/${VIDEO_FOLDER}/${id}${ext}`;if(await fileExists(url)){found=url;break;}}}
-  const p=document.getElementById("player"),l=document.getElementById("loading");
-  if(!found){l.style.display="none";p.innerHTML=`<div class="not-found">🎬 Esta película aún no está disponible.</div>`;return;}
-  const ext=found.split('.').pop().toLowerCase();let type="mp4";
-  if(["m3u8"].includes(ext))type="hls";else if(["webm"].includes(ext))type="webm";else if(["mkv","avi","mov","flv"].includes(ext))type="mp4";
-  jwplayer("player").setup({file:found,type:type,width:"100%",height:"100%",autostart:false,controls:true,playbackRateControls:true,skin:{name:"netflix"},stretching:"uniform",image:movie.backdrop_path?TMDB_IMG+movie.backdrop_path:"",mute:false});
-  addForcedCastButton();setupResumeBehavior(id);
-  jwplayer("player").on('ready',function(){l.style.display="none";showResumeOverlayIfNeeded(id);try{jwplayer().addButton('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23FFFFFF" d="M1 18h2v3h18v-3h2v5H1v-5zm15-8l-6 4V6l6 4zM3 6h10V4H3v2z"/></svg>','Cast a TV',()=>{startCastFlow(found,movie);},'btn_cast_custom');}catch(e){}showSavedBadge(false);});
-  let lastSave=0;jwplayer("player").on('time',function(e){const pos=Math.floor(e.position||0);if(pos-lastSave>=RESUME_SAVE_INTERVAL){lastSave=pos;saveResumePosition(id,pos);showSavedBadge(true);setTimeout(()=>showSavedBadge(false),1200);}});
-  jwplayer("player").on('complete',function(){clearResumePosition(id);showSavedBadge(false);});
-  jwplayer("player").on('pause',function(){const pos=Math.floor(jwplayer().getPosition()||0);saveResumePosition(id,pos);});
-}
-
-function saveResumePosition(id,s){try{localStorage.setItem(getResumeKey(id),JSON.stringify({pos:Math.floor(s),ts:Date.now()}));}catch(e){}}
-function getResumePosition(id){try{const raw=localStorage.getItem(getResumeKey(id));if(!raw)return null;return JSON.parse(raw).pos||0;}catch(e){return null;}}
-function clearResumePosition(id){try{localStorage.removeItem(getResumeKey(id));}catch(e){}}
-
-function showResumeOverlayIfNeeded(id){
-  const saved=getResumePosition(id);if(!saved||saved<MIN_SECONDS_TO_PROMPT)return;
-  const pc=document.getElementById("player-container");if(document.getElementById("resume-overlay"))return;
-  const o=document.createElement("div");o.id="resume-overlay";o.className="resume-overlay";
-  o.innerHTML=`<div class="resume-card"><div style="font-size:14px;">Parece que estabas en <strong>${secToTime(saved)}</strong></div><div style="margin-top:8px;font-size:13px;color:#cfcfcf;">¿Continuar?</div><div style="margin-top:12px;"><button id="resume-continue" class="resume-btn">Continuar desde ${secToTime(saved)}</button><button id="resume-restart" class="resume-btn secondary">Empezar desde 0</button></div></div>`;
-  pc.appendChild(o);
-  document.getElementById("resume-continue").onclick=()=>{o.remove();jwplayer().seek(saved);jwplayer().play();};
-  document.getElementById("resume-restart").onclick=()=>{o.remove();jwplayer().seek(0);jwplayer().play();clearResumePosition(id);};
-}
-
-function showSavedBadge(show){
-  let b=document.getElementById("saved-badge"),pc=document.getElementById("player-container");
-  if(!b){b=document.createElement("div");b.id="saved-badge";b.className="saved-badge";pc.appendChild(b);}
-  b.style.display=show?"block":"none";
-}
-
-function addForcedCastButton(){
-  const pc=document.getElementById("player-container");if(document.getElementById("jw-cast-forced"))return;
-  const btn=document.createElement("div");btn.id="jw-cast-forced";btn.className="jw-cast-forced";btn.title="Transmitir a TV";
-  btn.innerHTML=`<svg viewBox="0 0 24 24"><path d="M1 18h2v3h18v-3h2v5H1v-5zm15-8l-6 4V6l6 4zM3 6h10V4H3v2z"/></svg>`;
-  btn.onclick=async()=>{const file=jwplayer().getPlaylistItem().file;const title=jwplayer().getPlaylistItem().title||document.title;const poster=jwplayer().getPlaylistItem().image;await startCastFlow(file,{title,image:poster});};
-  pc.appendChild(btn);
-}
-
-/* ======= CHROMECAST CONFIG ======= */
-window.__onGCastApiAvailable = function(isAvailable){
-  if(isAvailable){
-    const context = cast.framework.CastContext.getInstance();
-    context.setOptions({
-      receiverApplicationId: 'CC1AD845',
-      autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-    });
-    console.log("✅ Chromecast listo y configurado con CC1AD845");
-  } else {
-    console.warn("⚠️ Chromecast no disponible (SDK no cargado)");
-  }
-};
-
-function getMimeTypeFromUrl(url){
-  const ext=(url.split('.').pop()||"").toLowerCase();
-  if(ext==="m3u8")return"application/vnd.apple.mpegurl";
-  if(ext==="mpd")return"application/dash+xml";
-  if(ext==="mp4")return"video/mp4";
-  if(ext==="webm")return"video/webm";
-  return"video/*";
-}
-
-async function startCastFlow(fileUrl,meta){
-  if(!fileUrl){alert("No hay URL para transmitir.");return;}
+async function fileExists(url){
   try{
-    const context = cast.framework.CastContext.getInstance();
-    const session = await context.requestSession();
-    if(!session){alert("No se pudo iniciar Cast.");return;}
-    const mediaInfo = new chrome.cast.media.MediaInfo(fileUrl,getMimeTypeFromUrl(fileUrl));
-    mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
-    mediaInfo.metadata.title = meta?.title || document.title;
-    if(meta?.image) mediaInfo.metadata.images = [{url:meta.image}];
-    const request = new chrome.cast.media.LoadRequest(mediaInfo);
-    session.loadMedia(request).then(()=>console.log("🎬 Enviado a Chromecast"),err=>console.error("Error:",err));
-  }catch(e){
-    console.error("Error Cast:",e);
-    alert("Tu navegador no soporta Chromecast.");
-  }
+    const r=await fetch(url,{method:"HEAD"});
+    return r.ok;
+  }catch{return false;}
 }
 
-function setupResumeBehavior(){}
+async function loadVideo(id, movie){
+  let found=null;
+
+  try{
+    const res=await fetch(JSON_PATH);
+    const data=await res.json();
+    if(data[id]) found=data[id];
+  }catch(e){console.warn("No se pudo cargar enlaces.json", e);}
+
+  if(!found){
+    for(const ext of FORMATS){
+      const url=`${window.location.origin}/${VIDEO_FOLDER}/${id}${ext}`;
+      if(await fileExists(url)){
+        found=url;
+        break;
+      }
+    }
+  }
+
+  const playerDiv=document.getElementById("player");
+  const loadingDiv=document.getElementById("loading");
+  if(!found){
+    loadingDiv.style.display="none";
+    playerDiv.innerHTML=`<div class="not-found">🎬 Esta película aún no está disponible.<br>
+      Agrega un enlace en <code>${JSON_PATH}</code> o sube el archivo a <code>/${VIDEO_FOLDER}/${id}.mp4</code>.</div>`;
+    return;
+  }
+
+  console.log("🎥 Enlace de video encontrado:",found);
+
+  const ext = found.split('.').pop().toLowerCase();
+  let type = "mp4"; 
+  if(["m3u8"].includes(ext)) type = "hls";
+  else if(["webm"].includes(ext)) type = "webm";
+  else if(["mkv","avi","mov","flv"].includes(ext)) type = "mp4";
+
+  const player = jwplayer("player").setup({
+    file:found,
+    type:type,
+    width:"100%",
+    height:"100%",
+    autostart:false,
+    controls:true,
+    playbackRateControls:true,
+    skin:{name:"netflix"},
+    stretching:"uniform",
+    image: movie.backdrop_path ? TMDB_IMG + movie.backdrop_path : "",
+    mute:false
+  });
+
+  player.on('ready', function(){
+    if(loadingDiv) loadingDiv.style.display="none";
+
+    // 🔹 Reanudar video
+    const savedTime = localStorage.getItem(`movie_${id}_time`);
+    if(savedTime && parseFloat(savedTime) > 30) {
+      const overlay = document.createElement('div');
+      overlay.className = 'resume-overlay';
+      overlay.innerHTML = `
+        <p>¿Deseas continuar desde el minuto ${(savedTime/60).toFixed(1)}?</p>
+        <div>
+          <button id="resumeYes">Sí, continuar</button>
+          <button id="resumeNo">No, empezar de nuevo</button>
+        </div>`;
+      document.getElementById('player-container').appendChild(overlay);
+
+      document.getElementById('resumeYes').onclick = () => {
+        overlay.remove();
+        player.seek(parseFloat(savedTime));
+        player.play(true);
+      };
+      document.getElementById('resumeNo').onclick = () => {
+        overlay.remove();
+        player.play(true);
+      };
+    }
+
+    // 🔹 Guardar tiempo cada 10 segundos
+    setInterval(() => {
+      const pos = player.getPosition();
+      if(pos > 0) localStorage.setItem(`movie_${id}_time`, pos);
+    }, 10000);
+  });
+}
 </script>
+ 
 </body>
 </html>
