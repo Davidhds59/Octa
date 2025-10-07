@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ver película</title>
-<link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
+ <link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
 <script src="https://cdn.jwplayer.com/libraries/IDzF9Zmk.js"></script>
 
 <style>
@@ -153,10 +153,10 @@
 
   /* 🔹 Contador de vistas */
   #viewCount {
-    margin-top: 10px;
-    color: #00ff99;
-    font-size: 0.9rem;
-    text-shadow: 0 0 5px #00ff99;
+    margin-top:6px;
+    color:#00ff99;
+    font-size:0.9rem;
+    text-shadow:0 0 5px #00ff99;
   }
 </style>
 </head>
@@ -174,7 +174,6 @@ const TMDB_IMG = "https://image.tmdb.org/t/p/original";
 const VIDEO_FOLDER = "peliculas"; 
 const FORMATS = [".mkv", ".mp4", ".m3u8", ".avi", ".mov", ".webm", ".flv"]; 
 const JSON_PATH = "data/enlaces.json"; 
-const VISITS_PATH = "data/visitas.json"; // opcional, si lo agregas
 
 const id = new URLSearchParams(window.location.search).get("id");
 
@@ -206,7 +205,7 @@ function renderMovie(movie){
   container.innerHTML=`
     <img src="${TMDB_IMG + movie.poster_path}" class="poster">
     <h1>${movie.title}</h1>
-    <div id="viewCount">👁️ Contando vistas...</div>
+    <div id="viewCount">👁️ Cargando vistas...</div>
     <div class="details">
       <span>📅 ${formatDate(movie.release_date)}</span>
       <span>⏱️ ${movie.runtime || "?"} min</span>
@@ -225,36 +224,29 @@ function renderMovie(movie){
       <div class="loading" id="loading">Cargando video...</div>
     </div>
   `;
-  countView(id); // ← contador aquí
+
+  iniciarContadorVistas(id); // 👁️ contador global
   loadVideo(id, movie);
 }
 
-/* 🔹 Contador sin backend (solo JS) */
-function countView(id) {
-  const key = `viewed_${id}`;
-  const viewed = localStorage.getItem(key);
-  let globalCount = 0;
+// ✅ CONTADOR GLOBAL DE VISITAS (CountAPI)
+function iniciarContadorVistas(idPelicula) {
+  const namespace = "cine_ramirez_vistas";
+  const key = `pelicula_${idPelicula}`;
+  const url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
 
-  // Leer contador simulado desde JSON (opcional)
-  fetch('data/visitas.json')
-    .then(res => res.ok ? res.json() : {})
-    .then(json => {
-      globalCount = json[id] || 0;
-      if (!viewed) {
-        globalCount++;
-        localStorage.setItem(key, 'true');
-      }
-      document.getElementById('viewCount').textContent = `👁️ ${globalCount} vistas`;
+  fetch(url)
+    .then(r => r.json())
+    .then(data => {
+      const vistas = data.value;
+      document.getElementById("viewCount").textContent = `👁️ ${vistas} vistas`;
     })
-    .catch(() => {
-      // Si no hay archivo JSON, usa solo el localStorage
-      if (!viewed) localStorage.setItem(key, 'true');
-      const fakeCount = Math.floor(Math.random() * 100) + 1;
-      document.getElementById('viewCount').textContent = `👁️ ${fakeCount} vistas`;
+    .catch(err => {
+      console.error("Error al contar vistas:", err);
+      document.getElementById("viewCount").textContent = "👁️ — vistas";
     });
 }
 
-/* 🔹 Reproductor */
 async function fileExists(url){
   try{
     const r=await fetch(url,{method:"HEAD"});
@@ -264,6 +256,7 @@ async function fileExists(url){
 
 async function loadVideo(id, movie){
   let found=null;
+
   try{
     const res=await fetch(JSON_PATH);
     const data=await res.json();
@@ -289,6 +282,8 @@ async function loadVideo(id, movie){
     return;
   }
 
+  console.log("🎥 Enlace de video encontrado:",found);
+
   const ext = found.split('.').pop().toLowerCase();
   let type = "mp4"; 
   if(["m3u8"].includes(ext)) type = "hls";
@@ -311,6 +306,7 @@ async function loadVideo(id, movie){
 
   player.on('ready', function(){
     if(loadingDiv) loadingDiv.style.display="none";
+
     const savedTime = localStorage.getItem(`movie_${id}_time`);
     if(savedTime && parseFloat(savedTime) > 30) {
       const overlay = document.createElement('div');
@@ -341,6 +337,5 @@ async function loadVideo(id, movie){
   });
 }
 </script>
-
 </body>
 </html>
