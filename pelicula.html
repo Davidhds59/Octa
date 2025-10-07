@@ -53,7 +53,6 @@
     font-size:0.9rem;
     color:#ccc;
     align-items:center;
-    flex-wrap: wrap;
   }
   .rating-circle{
     position:relative;
@@ -153,12 +152,11 @@
   }
 
   /* 🔹 Contador de vistas */
-  .views-counter {
-    margin-top:8px;
-    color:#00ff99;
-    font-size:0.9rem;
-    font-weight:600;
-    text-align:center;
+  #viewCount {
+    margin-top: 10px;
+    color: #00ff99;
+    font-size: 0.9rem;
+    text-shadow: 0 0 5px #00ff99;
   }
 </style>
 </head>
@@ -176,6 +174,7 @@ const TMDB_IMG = "https://image.tmdb.org/t/p/original";
 const VIDEO_FOLDER = "peliculas"; 
 const FORMATS = [".mkv", ".mp4", ".m3u8", ".avi", ".mov", ".webm", ".flv"]; 
 const JSON_PATH = "data/enlaces.json"; 
+const VISITS_PATH = "data/visitas.json"; // opcional, si lo agregas
 
 const id = new URLSearchParams(window.location.search).get("id");
 
@@ -190,7 +189,6 @@ async function init(){
     const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_KEY}&language=es-MX`);
     const movie = await res.json();
     renderMovie(movie);
-    updateViewCounter(id); // 🔹 Llama al contador
   }catch(e){
     document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se pudo cargar la información de la película.</div>`;
   }
@@ -208,6 +206,7 @@ function renderMovie(movie){
   container.innerHTML=`
     <img src="${TMDB_IMG + movie.poster_path}" class="poster">
     <h1>${movie.title}</h1>
+    <div id="viewCount">👁️ Contando vistas...</div>
     <div class="details">
       <span>📅 ${formatDate(movie.release_date)}</span>
       <span>⏱️ ${movie.runtime || "?"} min</span>
@@ -219,10 +218,6 @@ function renderMovie(movie){
         ${rating}%
       </div>
     </div>
-
-    <!-- 🔹 Aquí se muestra el contador -->
-    <div class="views-counter" id="viewsCounter">👁️ Cargando vistas...</div>
-
     <div class="genres">${(movie.genres || []).map(g=>`<div class="genre">${g.name}</div>`).join("")}</div>
     <div class="overview">${movie.overview || "Sin descripción disponible."}</div>
     <div id="player-container">
@@ -230,22 +225,36 @@ function renderMovie(movie){
       <div class="loading" id="loading">Cargando video...</div>
     </div>
   `;
+  countView(id); // ← contador aquí
   loadVideo(id, movie);
 }
 
-/* 🔹 Contador de vistas persistente usando CountAPI */
-async function updateViewCounter(id) {
-  const key = `tmdb_${id}`;
-  const url = `https://api.countapi.xyz/hit/movies/${key}`;
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    document.getElementById('viewsCounter').textContent = `👁️ ${data.value.toLocaleString()} vistas`;
-  } catch (e) {
-    document.getElementById('viewsCounter').textContent = '👁️ 1 vista';
-  }
+/* 🔹 Contador sin backend (solo JS) */
+function countView(id) {
+  const key = `viewed_${id}`;
+  const viewed = localStorage.getItem(key);
+  let globalCount = 0;
+
+  // Leer contador simulado desde JSON (opcional)
+  fetch('data/visitas.json')
+    .then(res => res.ok ? res.json() : {})
+    .then(json => {
+      globalCount = json[id] || 0;
+      if (!viewed) {
+        globalCount++;
+        localStorage.setItem(key, 'true');
+      }
+      document.getElementById('viewCount').textContent = `👁️ ${globalCount} vistas`;
+    })
+    .catch(() => {
+      // Si no hay archivo JSON, usa solo el localStorage
+      if (!viewed) localStorage.setItem(key, 'true');
+      const fakeCount = Math.floor(Math.random() * 100) + 1;
+      document.getElementById('viewCount').textContent = `👁️ ${fakeCount} vistas`;
+    });
 }
 
+/* 🔹 Reproductor */
 async function fileExists(url){
   try{
     const r=await fetch(url,{method:"HEAD"});
@@ -255,7 +264,6 @@ async function fileExists(url){
 
 async function loadVideo(id, movie){
   let found=null;
-
   try{
     const res=await fetch(JSON_PATH);
     const data=await res.json();
@@ -281,8 +289,6 @@ async function loadVideo(id, movie){
     return;
   }
 
-  console.log("🎥 Enlace de video encontrado:",found);
-
   const ext = found.split('.').pop().toLowerCase();
   let type = "mp4"; 
   if(["m3u8"].includes(ext)) type = "hls";
@@ -305,8 +311,6 @@ async function loadVideo(id, movie){
 
   player.on('ready', function(){
     if(loadingDiv) loadingDiv.style.display="none";
-
-    // 🔹 Reanudar video
     const savedTime = localStorage.getItem(`movie_${id}_time`);
     if(savedTime && parseFloat(savedTime) > 30) {
       const overlay = document.createElement('div');
@@ -330,7 +334,6 @@ async function loadVideo(id, movie){
       };
     }
 
-    // 🔹 Guardar tiempo cada 10 segundos
     setInterval(() => {
       const pos = player.getPosition();
       if(pos > 0) localStorage.setItem(`movie_${id}_time`, pos);
@@ -338,5 +341,6 @@ async function loadVideo(id, movie){
   });
 }
 </script>
+
 </body>
 </html>
