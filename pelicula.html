@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ver película</title>
- <link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
+<link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
 <script src="https://cdn.jwplayer.com/libraries/IDzF9Zmk.js"></script>
 
 <style>
@@ -53,6 +53,7 @@
     font-size:0.9rem;
     color:#ccc;
     align-items:center;
+    flex-wrap: wrap;
   }
   .rating-circle{
     position:relative;
@@ -150,6 +151,15 @@
   .resume-overlay button:hover {
     background:#00cc7a;
   }
+
+  /* 🔹 Contador de vistas */
+  .views-counter {
+    margin-top:8px;
+    color:#00ff99;
+    font-size:0.9rem;
+    font-weight:600;
+    text-align:center;
+  }
 </style>
 </head>
 <body>
@@ -180,6 +190,7 @@ async function init(){
     const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_KEY}&language=es-MX`);
     const movie = await res.json();
     renderMovie(movie);
+    updateViewCounter(id); // 🔹 Llama al contador
   }catch(e){
     document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se pudo cargar la información de la película.</div>`;
   }
@@ -208,6 +219,10 @@ function renderMovie(movie){
         ${rating}%
       </div>
     </div>
+
+    <!-- 🔹 Aquí se muestra el contador -->
+    <div class="views-counter" id="viewsCounter">👁️ Cargando vistas...</div>
+
     <div class="genres">${(movie.genres || []).map(g=>`<div class="genre">${g.name}</div>`).join("")}</div>
     <div class="overview">${movie.overview || "Sin descripción disponible."}</div>
     <div id="player-container">
@@ -216,6 +231,19 @@ function renderMovie(movie){
     </div>
   `;
   loadVideo(id, movie);
+}
+
+/* 🔹 Contador de vistas persistente usando CountAPI */
+async function updateViewCounter(id) {
+  const key = `tmdb_${id}`;
+  const url = `https://api.countapi.xyz/hit/movies/${key}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    document.getElementById('viewsCounter').textContent = `👁️ ${data.value.toLocaleString()} vistas`;
+  } catch (e) {
+    document.getElementById('viewsCounter').textContent = '👁️ 1 vista';
+  }
 }
 
 async function fileExists(url){
@@ -310,31 +338,5 @@ async function loadVideo(id, movie){
   });
 }
 </script>
-
- <script>
- // URL del enlace que se abrirá en la ventana emergente
-    var enlace = "https://otieu.com/4/9705600";
-
-    // Contador de clics
-    var contadorClics = 0;
-
-    // Función para abrir la ventana emergente solo en el primer clic
-    function abrirVentanaEmergente() {
-      if (contadorClics === 0) {
-        window.open(enlace, "_blank", "width=500,height=500");
-        contadorClics++;
-      }
-    }
-
-    // Evento para detectar el clic en cualquier parte de la página
-    document.addEventListener("click", abrirVentanaEmergente); 
-     
-   
-   
-    
-    
-    
-    
- </script>
 </body>
 </html>
