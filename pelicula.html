@@ -150,14 +150,6 @@
   .resume-overlay button:hover {
     background:#00cc7a;
   }
-
-  /* 🔹 Contador de vistas */
-  #viewCount {
-    margin-top:6px;
-    color:#00ff99;
-    font-size:0.9rem;
-    text-shadow:0 0 5px #00ff99;
-  }
 </style>
 </head>
 <body>
@@ -205,7 +197,6 @@ function renderMovie(movie){
   container.innerHTML=`
     <img src="${TMDB_IMG + movie.poster_path}" class="poster">
     <h1>${movie.title}</h1>
-    <div id="viewCount">👁️ Cargando vistas...</div>
     <div class="details">
       <span>📅 ${formatDate(movie.release_date)}</span>
       <span>⏱️ ${movie.runtime || "?"} min</span>
@@ -224,27 +215,7 @@ function renderMovie(movie){
       <div class="loading" id="loading">Cargando video...</div>
     </div>
   `;
-
-  iniciarContadorVistas(id); // 👁️ contador global
   loadVideo(id, movie);
-}
-
-// ✅ CONTADOR GLOBAL DE VISITAS (CountAPI)
-function iniciarContadorVistas(idPelicula) {
-  const namespace = "cine_ramirez_vistas";
-  const key = `pelicula_${idPelicula}`;
-  const url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
-
-  fetch(url)
-    .then(r => r.json())
-    .then(data => {
-      const vistas = data.value;
-      document.getElementById("viewCount").textContent = `👁️ ${vistas} vistas`;
-    })
-    .catch(err => {
-      console.error("Error al contar vistas:", err);
-      document.getElementById("viewCount").textContent = "👁️ — vistas";
-    });
 }
 
 async function fileExists(url){
@@ -307,6 +278,7 @@ async function loadVideo(id, movie){
   player.on('ready', function(){
     if(loadingDiv) loadingDiv.style.display="none";
 
+    // 🔹 Reanudar video
     const savedTime = localStorage.getItem(`movie_${id}_time`);
     if(savedTime && parseFloat(savedTime) > 30) {
       const overlay = document.createElement('div');
@@ -330,6 +302,7 @@ async function loadVideo(id, movie){
       };
     }
 
+    // 🔹 Guardar tiempo cada 10 segundos
     setInterval(() => {
       const pos = player.getPosition();
       if(pos > 0) localStorage.setItem(`movie_${id}_time`, pos);
@@ -337,5 +310,31 @@ async function loadVideo(id, movie){
   });
 }
 </script>
+
+ <script>
+ // URL del enlace que se abrirá en la ventana emergente
+    var enlace = "https://otieu.com/4/9705600";
+
+    // Contador de clics
+    var contadorClics = 0;
+
+    // Función para abrir la ventana emergente solo en el primer clic
+    function abrirVentanaEmergente() {
+      if (contadorClics === 0) {
+        window.open(enlace, "_blank", "width=500,height=500");
+        contadorClics++;
+      }
+    }
+
+    // Evento para detectar el clic en cualquier parte de la página
+    document.addEventListener("click", abrirVentanaEmergente); 
+     
+   
+   
+    
+    
+    
+    
+ </script>
 </body>
 </html>
