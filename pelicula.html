@@ -336,54 +336,5 @@ async function loadVideo(id, movie){
     
     
  </script>
-
- <script>
-// ===============================
-//   CONTADOR DE VISITAS POR ID
-// ===============================
-
-// 1. Obtener el ID de la URL (ej: ?id=72331)
-const params = new URLSearchParams(window.location.search);
-const movieId = params.get("id");
-
-// Verificar que existe un ID
-if (movieId) {
-
-    // 2. Crear dinámicamente el div del contador
-    const contadorDiv = document.createElement("div");
-    contadorDiv.id = "contador-visitas";
-    // Estilo básico tipo etiqueta (TÚ lo puedes modificar con CSS)
-    contadorDiv.style.display = "inline-block";
-    contadorDiv.style.padding = "6px 12px";
-    contadorDiv.style.background = "rgba(0,0,0,0.7)";
-    contadorDiv.style.color = "#fff";
-    contadorDiv.style.borderRadius = "8px";
-    contadorDiv.style.fontSize = "14px";
-    contadorDiv.style.margin = "10px 0";
-    contadorDiv.style.fontWeight = "bold";
-    contadorDiv.innerText = "👁 Cargando visitas...";
-    document.body.appendChild(contadorDiv);
-
-    // 3. URL base de CountAPI
-    // Usamos tu dominio + "movie_" + ID como clave única
-    const namespace = "davidhds59_octapelis"; // puedes cambiar el nombre si gustas
-    const key = "movie_" + movieId;
-
-    // 4. Sumar visita
-    fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
-        .then(response => response.json())
-        .then(data => {
-            // data.value = visitas totales
-            contadorDiv.innerText = `👁 ${data.value} visitas`;
-        })
-        .catch(error => {
-            console.error("Error con el contador:", error);
-            contadorDiv.innerText = "👁 Visitas no disponibles";
-        });
-
-} else {
-    console.warn("No se encontró ?id= en la URL, no se puede contar visitas.");
-}
- </script>
 </body>
 </html>
