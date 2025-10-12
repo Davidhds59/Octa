@@ -481,7 +481,7 @@
 
       if (!append) container.innerHTML = "";
       const start = append ? container.childElementCount : 0;
-      const nextMovies = moviesToShow.slice(start, start + 20);
+      const nextMovies = moviesToShow.slice(start, start + 30);
 
       btnVerMas.style.display = moviesToShow.length > start + nextMovies.length ? "block" : "none";
       if (btnVerMas.style.display === "block") btnVerMas.onclick = () => renderMovies(genre, true);
