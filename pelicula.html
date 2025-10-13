@@ -278,14 +278,22 @@ async function loadVideo(id, movie){
   player.on('ready', function(){
     if(loadingDiv) loadingDiv.style.display="none";
 
-    /* ✅ BOTÓN CHROMECAST NATIVO */
+    /* ✅ BOTÓN WEB VIDEO CASTER */
     player.addButton(
       'https://cdn.freebiesupply.com/logos/thumbs/2x/cast-icon-chromecast-logo.png',
-      'Transmitir a TV',
-      () => player.cast(),
+      'Transmitir a TV (Web Video Caster)',
+      () => {
+        try {
+          const videoUrl = player.getPlaylistItem().file; // URL actual del video
+          const wvcUrl = `wvc-x-callback://open?url=${encodeURIComponent(videoUrl)}&secure_uri=true`;
+          window.location.href = wvcUrl;
+        } catch(e) {
+          console.error("Error al abrir Web Video Caster", e);
+        }
+      },
       'cast'
     );
-    /* ✅ FIN CHROMECAST */
+    /* ✅ FIN BOTÓN WVC */
 
     // 🔹 Reanudar video
     const savedTime = localStorage.getItem(`movie_${id}_time`);
@@ -320,6 +328,5 @@ async function loadVideo(id, movie){
 }
 </script>
 
- 
 </body>
 </html>
