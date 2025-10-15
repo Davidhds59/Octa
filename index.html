@@ -9,6 +9,36 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 
   <style>
+      
+
+    .bat {
+      position: fixed;
+      font-size: 28px;
+      color: #fff;
+      opacity: 0.9;
+      animation: fly linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes fly {
+      0% {
+        transform: translateX(-10vw) translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      50% {
+        transform: translateX(50vw) translateY(-10vh) rotate(-10deg);
+      }
+      100% {
+        transform: translateX(120vw) translateY(10vh) rotate(10deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes flap {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.7); }
+    }
     body {
       background: #000;
       color: #fff;
@@ -721,5 +751,34 @@
 
     loadMovies();
   </script>
+  
+  
+  <script>
+    const numBats = 20; // cantidad de murciélagos
+    for (let i = 0; i < numBats; i++) {
+      const bat = document.createElement('span');
+      bat.textContent = '👻';
+      bat.classList.add('bat');
+      const size = 20 + Math.random() * 40;
+      const top = Math.random() * 80;
+      const duration = 8 + Math.random() * 8;
+      const delay = Math.random() * -20;
+      bat.style.fontSize = `${size}px`;
+      bat.style.top = `${top}vh`;
+      bat.style.animationDuration = `${duration}s`;
+      bat.style.animationDelay = `${delay}s`;
+      // efecto de aleteo
+      const flap = document.createElement('span');
+      flap.textContent = '👻';
+      flap.style.display = 'inline-block';
+      flap.style.animation = `flap ${0.5 + Math.random()}s ease-in-out infinite`;
+      bat.textContent = '';
+      bat.appendChild(flap);
+      document.body.appendChild(bat);
+    }
+  </script>
+  
+  
+  
 </body>
 </html>
