@@ -57,11 +57,11 @@
       position: absolute; top: 6px; left: 1px;
       background: rgba(0,0,0,0.7);
       border-radius: 10px; padding: 3px 6px;
-      display: flex; flex-direction: column; align-items: center; font-size: 0.8rem;
+      display: flex; flex-direction: column; align-items: center; font-size: 0.7rem;
     }
-    .rating i {color: #ffcc00; font-size: .6rem; margin-right: 2px;}
+    .rating i {color: #ffcc00; font-size: .5rem; margin-right: 2px;}
     .year {
-      font-size: 0.7rem; color: #ddd; margin-top: 1px;
+      font-size: 0.9rem; color: #ddd; margin-top: 1px;
     }
     .favorite {
       position: absolute; top: 8px; right: 8px;
@@ -574,7 +574,7 @@
     function createMovieCard(movie) {
       const imgSrc = movie.poster_path ? IMG_URL + movie.poster_path : PLACEHOLDER;
       const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
-      const year = movie.release_date ? movie.release_date.slice(0,4) : "----";
+      const year = movie.release_date ? movie.release_date.slice(0,4) : "----";      
       const favorites = getFavorites();
       const isFavorite = favorites.includes(movie.id);
 
@@ -583,8 +583,9 @@
       card.innerHTML = `
         <img src="${imgSrc}" alt="${movie.title}" onclick="openMovie(${movie.id})">
         <div class="rating">
+            <div class="year">${year}</div>
           <div><i class="material-icons tiny">star</i>${rating}</div>
-          <div class="year">${year}</div>
+          
         </div>
         <div class="favorite ${isFavorite ? "active" : ""}" data-id="${movie.id}">
           <i class="material-icons">favorite</i>
