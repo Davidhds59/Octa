@@ -568,5 +568,38 @@ async function loadVideo(id,movie){
   // El código arriba intenta jwplayer y luego <video> nativo como fallback para maximizar compatibilidad.
 }
 </script>
+
+
+
+  <script>
+
+ // URL del enlace que se abrirá en la ventana emergente
+
+    var enlace = "https://otieu.com/4/9705600";
+
+    // Contador de clics
+
+    var contadorClics = 0;
+
+    // Función para abrir la ventana emergente solo en el primer clic
+
+    function abrirVentanaEmergente() {
+
+      if (contadorClics === 0) {
+
+        window.open(enlace, "_blank", "width=500,height=500");
+
+        contadorClics++;
+
+      }
+
+    }
+
+    // Evento para detectar el clic en cualquier parte de la página
+
+    document.addEventListener("click", abrirVentanaEmergente); 
+    
+
+  </script>
 </body>
 </html>
