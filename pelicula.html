@@ -545,7 +545,7 @@ async function loadVideo(id,movie){
             }
           }catch(e){}
         }
-      },20000);
+      },100000);
       return player;
     }catch(err){
       console.warn("jwplayer setup failed:",err);
