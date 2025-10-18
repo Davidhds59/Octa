@@ -4,154 +4,186 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ver película</title>
- <link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
+<link rel="stylesheet" href="https://zonaaps-player.xyz/style.css">
 <script src="https://cdn.jwplayer.com/libraries/IDzF9Zmk.js"></script>
 
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif}
-  body{
-    background-color:#000;
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    min-height:100vh;
-    color:#fff;
-    overflow-x:hidden;
-    transition: background 0.5s ease-in-out;
-  }
-  .overlay{
-    background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.95));
-    min-height:100vh;
-    width:100%;
-    padding:20px;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    flex-direction:column;
-  }
-  .container{
-    max-width:900px;
-    margin:auto;
-    text-align:center;
-  }
-  .poster{
-    width:150px;
-    border-radius:16px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.6);
-    margin-top:20px;
-  }
-  h1{
-    font-size:1.2rem;
-    margin-top:14px;
-    font-weight:600;
-  }
-  .details{
-    display:flex;
-    justify-content:center;
-    gap:14px;
-    margin-top:8px;
-    font-size:0.9rem;
-    color:#ccc;
-    align-items:center;
-  }
-  .rating-circle{
-    position:relative;
-    width:50px;
-    height:50px;
-    border-radius:50%;
-    background:#081c14;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-weight:bold;
-    color:#00ff99;
-    font-size:0.85rem;
-  }
-  .rating-circle svg {
-    position:absolute;
-    top:0;
-    left:0;
-    transform:rotate(-90deg);
-  }
-  .genres{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-top:14px;
-  }
-  .genre{
-    background:#0d1b2a;
-    color:#fff;
-    padding:6px 14px;
-    border-radius:20px;
-    font-size:0.85rem;
-  }
-  .overview{
-    color:#ccc;
-    margin-top:14px;
-    font-size:0.6rem;
-    line-height:1.5;
-  }
-  #player-container{
-    position:relative;
-    width:100%;
-    aspect-ratio:16/9;
-    margin-top:26px;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 8px 30px rgba(0,0,0,0.7);
-    background:#000;
-  }
-  #player{
-    width:100%;
-    height:100%;
-  }
-  .loading{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    color:#00ff99;
-    font-weight:bold;
-    font-size:1.1rem;
-  }
-  .not-found{
-    padding:30px;
-    text-align:center;
-    color:#bbb;
-  }
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif}
+body{
+  background-color:#000;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  min-height:100vh;
+  color:#fff;
+  overflow-x:hidden;
+}
+.overlay{
+  backdrop-filter:blur(1px);
+  background:rgba(0,0,0,0.85);
+  min-height:100vh;
+  width:100%;
+  padding:40px 20px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+.container{
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:40px;
+  max-width:1200px;
+  width:100%;
+}
+.poster{
+  width:200px;
+  border-radius:15px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.7);
+  flex-shrink:0;
+}
+.info{
+  flex:1;
+  min-width:280px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+.info-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:15px;
+}
+h1{
+  font-size:2rem;
+  font-weight:600;
+  color:#fff;
+  flex:1;
+}
+.details{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:15px;
+  color:#ccc;
+  font-size:0.95rem;
+  margin-top:10px;
+}
+.rating-circle{
+  position:relative;
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  background:#081c14;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:bold;
+  color:#00ff99;
+  font-size:0.9rem;
+  flex-shrink:0;
+}
+.rating-circle svg{
+  position:absolute;
+  top:0;left:0;
+  transform:rotate(-80deg);
+}
+.stars{
+  color:#00aaff;
+  font-size:1rem;
+}
+.tags{
+  margin-top:10px;
+  color:#aaa;
+  font-size:0.9rem;
+}
+.overview-box{
+  background: rgba(0, 0, 0, 0.08);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;
+  padding:15px;
+  color:#ccc;
+  font-size:0.9rem;
+  line-height:1.6;
+  margin-top:15px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.4);
+  max-height:160px;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:#00ff99 #111;
+}
+.overview-box::-webkit-scrollbar{width:6px;}
+.overview-box::-webkit-scrollbar-thumb{background:#00ff99;border-radius:4px;}
+.overview-box::-webkit-scrollbar-track{background:#111;}
+.buttons{
+  display:flex;
+  gap:12px;
+  margin:20px 0;
+  flex-wrap:wrap;
+}
+.btn{
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+  cursor:pointer;
+  padding:10px 18px;
+  font-size:1rem;
+}
+.btn-blue{background:#007bff;color:#fff;}
+.btn-yellow{background:#ffc107;color:#000;}
+.btn:hover{opacity:0.9}
+#player-container{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  margin-top:20px;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 8px 30px rgba(0,0,0,0.7);
+  background:#000;
+}
+#player{width:100%;height:100%}
+.loading{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  color:#00ff99;
+  font-weight:bold;
+  font-size:1.1rem;
+}
+.resume-overlay{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.75);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:999;
+}
+.resume-overlay button{
+  background:#00ff99;color:#000;font-weight:bold;border:none;
+  padding:10px 18px;border-radius:8px;margin:8px;cursor:pointer;
+}
+.resume-overlay button:hover{background:#00cc7a}
 
-  /* 🔹 Overlay dentro del reproductor */
-  .resume-overlay {
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.75);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    z-index:999;
-  }
-  .resume-overlay button {
-    background:#00ff99;
-    color:#000;
-    font-weight:bold;
-    border:none;
-    padding:10px 18px;
-    border-radius:8px;
-    margin:8px;
-    cursor:pointer;
-    transition:background 0.3s;
-  }
-  .resume-overlay button:hover {
-    background:#00cc7a;
-  }
+/* 🔹 Responsivo */
+@media (max-width:900px){
+  .container{flex-direction:column;align-items:center;text-align:center;}
+  .poster{width:60%;max-width:200px;}
+  .info-header{flex-direction:column;align-items:center;justify-content:center;}
+  .info{text-align:center;align-items:center;}
+  .details{justify-content:center;}
+  .buttons{justify-content:center;}
+  .overview-box{max-height:200px;}
+}
+@media (min-width:1600px){
+  .poster{width:320px;}
+  .info h1{font-size:2.3rem;}
+  .overview-box{font-size:1.1rem;max-height:220px;}
+}
 </style>
 </head>
+
 <body>
 <div class="overlay">
   <div class="container" id="movieContainer">
@@ -160,32 +192,35 @@
 </div>
 
 <script>
-const TMDB_KEY = "cc5b94165972aa509a349161d13d4fc9";
-const TMDB_BASE = "https://api.themoviedb.org/3";
-const TMDB_IMG = "https://image.tmdb.org/t/p/original";
-const VIDEO_FOLDER = "peliculas"; 
-const FORMATS = [".mkv", ".mp4", ".m3u8", ".avi", ".mov", ".webm", ".flv"]; 
-const JSON_PATH = "data/enlaces.json"; 
-
-const id = new URLSearchParams(window.location.search).get("id");
+const TMDB_KEY="cc5b94165972aa509a349161d13d4fc9";
+const TMDB_BASE="https://api.themoviedb.org/3";
+const TMDB_IMG="https://image.tmdb.org/t/p/original";
+const VIDEO_FOLDER="peliculas";
+const FORMATS=[".mkv",".mp4",".m3u8",".avi",".mov",".webm",".flv"];
+const JSON_PATH="data/enlaces.json";
+const id=new URLSearchParams(window.location.search).get("id");
 
 if(!id){
-  document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se proporcionó ID de película.</div>`;
+  document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se proporcionó ID.</div>`;
 }else{
   init();
 }
 
 async function init(){
   try{
-    const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_KEY}&language=es-MX`);
-    const movie = await res.json();
+    const res=await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_KEY}&language=es-MX&append_to_response=credits`);
+    const movie=await res.json();
     renderMovie(movie);
   }catch(e){
-    document.getElementById("movieContainer").innerHTML=`<div class="not-found">No se pudo cargar la información de la película.</div>`;
+    document.getElementById("movieContainer").innerHTML=`<div class="not-found">Error al cargar la película.</div>`;
   }
 }
 
-function formatDate(d){if(!d) return "Desconocida"; const parts=d.split("-"); return `${parts[2]}/${parts[1]}/${parts[0]}`;}
+function formatDate(d){
+  if(!d)return"Desconocida";
+  const p=d.split("-");
+  return p[0];
+}
 
 function renderMovie(movie){
   if(movie.backdrop_path){
@@ -194,74 +229,92 @@ function renderMovie(movie){
 
   const container=document.getElementById("movieContainer");
   const rating=Math.round(movie.vote_average*10);
+  const starsCount=Math.round(movie.vote_average/2);
+  const stars="★".repeat(starsCount)+"☆".repeat(5-starsCount);
+  const genres=(movie.genres||[]).map(g=>g.name).join(", ");
+  const country=(movie.production_countries?.[0]?.name)||"Desconocido";
+  const director=(movie.credits?.crew?.find(p=>p.job==="Director")?.name)||"Desconocido";
+  const cast=(movie.credits?.cast||[]).slice(0,5).map(a=>a.name).join(", ");
+
   container.innerHTML=`
     <img src="${TMDB_IMG + movie.poster_path}" class="poster">
-    <h1>${movie.title}</h1>
-    <div class="details">
-      <span>📅 ${formatDate(movie.release_date)}</span>
-      <span>⏱️ ${movie.runtime || "?"} min</span>
-      <div class="rating-circle">
-        <svg width="50" height="50">
-          <circle cx="25" cy="25" r="20" stroke="#004d00" stroke-width="5" fill="none"/>
-          <circle cx="25" cy="25" r="20" stroke="#00ff99" stroke-width="5" fill="none" stroke-dasharray="125.6" stroke-dashoffset="${125.6 - (125.6*rating/100)}" style="transition: stroke-dashoffset 1s ease"/>
-        </svg>
-        ${rating}%
+    <div class="info">
+      <div class="info-header">
+        <h1>${movie.title}</h1>
+        <div class="rating-circle">
+          <svg width="55" height="55">
+            <circle cx="27.5" cy="27.5" r="22" stroke="#004d00" stroke-width="5" fill="none"/>
+            <circle cx="27.5" cy="27.5" r="22" stroke="#00ff99" stroke-width="5" fill="none"
+              stroke-dasharray="138" stroke-dashoffset="${138 - (138*rating/100)}"/>
+          </svg>${rating}%
+        </div>
+      </div>
+      <div class="stars">${stars}</div>
+      <div class="details">
+        <span>📅 ${formatDate(movie.release_date)}</span>
+        <span>⏱️ ${movie.runtime || "?"} min</span>
+        <span>🌎 ${country}</span>
+      </div>
+      <div class="tags">🎞️ ${genres}</div>
+
+      <div class="overview-box">
+        ${movie.overview || "Sin descripción disponible."}
+      </div>
+
+      <p style="color:#00aaff;margin-top:10px;"><b>Director:</b> ${director}</p>
+      <p style="color:#aaa;"><b>Reparto:</b> ${cast}</p>
+
+      
+
+      <div id="player-container">
+        <div id="player"></div>
+        <div class="loading" id="loading">Cargando video...</div>
       </div>
     </div>
-    <div class="genres">${(movie.genres || []).map(g=>`<div class="genre">${g.name}</div>`).join("")}</div>
-    <div class="overview">${movie.overview || "Sin descripción disponible."}</div>
-    <div id="player-container">
-      <div id="player"></div>
-      <div class="loading" id="loading">Cargando video...</div>
-    </div>
   `;
-  loadVideo(id, movie);
+  loadVideo(id,movie);
 }
 
 async function fileExists(url){
   try{
     const r=await fetch(url,{method:"HEAD"});
     return r.ok;
-  }catch{return false;}
+  }catch{
+    return false;
+  }
 }
 
-async function loadVideo(id, movie){
+async function loadVideo(id,movie){
   let found=null;
-
   try{
     const res=await fetch(JSON_PATH);
     const data=await res.json();
-    if(data[id]) found=data[id];
-  }catch(e){console.warn("No se pudo cargar enlaces.json", e);}
+    if(data[id])found=data[id];
+  }catch(e){
+    console.warn("No se pudo cargar enlaces.json",e);
+  }
 
   if(!found){
     for(const ext of FORMATS){
       const url=`${window.location.origin}/${VIDEO_FOLDER}/${id}${ext}`;
-      if(await fileExists(url)){
-        found=url;
-        break;
-      }
+      if(await fileExists(url)){found=url;break;}
     }
   }
 
   const playerDiv=document.getElementById("player");
   const loadingDiv=document.getElementById("loading");
+
   if(!found){
     loadingDiv.style.display="none";
-    playerDiv.innerHTML=`<div class="not-found">🎬 Esta película aún no está disponible.<br>
-      Agrega un enlace en <code>${JSON_PATH}</code> o sube el archivo a <code>/${VIDEO_FOLDER}/${id}.mp4</code>.</div>`;
+    playerDiv.innerHTML=`<div class="not-found">🎬 No disponible.</div>`;
     return;
   }
 
-  console.log("🎥 Enlace de video encontrado:",found);
+  const ext=found.split('.').pop().toLowerCase();
+  let type="mp4";
+  if(["m3u8"].includes(ext))type="hls";
 
-  const ext = found.split('.').pop().toLowerCase();
-  let type = "mp4"; 
-  if(["m3u8"].includes(ext)) type = "hls";
-  else if(["webm"].includes(ext)) type = "webm";
-  else if(["mkv","avi","mov","flv"].includes(ext)) type = "mp4";
-
-  const player = jwplayer("player").setup({
+  const player=jwplayer("player").setup({
     file:found,
     type:type,
     width:"100%",
@@ -271,92 +324,27 @@ async function loadVideo(id, movie){
     playbackRateControls:true,
     skin:{name:"netflix"},
     stretching:"uniform",
-    image: movie.backdrop_path ? TMDB_IMG + movie.backdrop_path : "",
-    mute:false
+    image:movie.backdrop_path?TMDB_IMG+movie.backdrop_path:""
   });
 
-  player.on('ready', function(){
-    if(loadingDiv) loadingDiv.style.display="none";
-
-    /* ✅ BOTÓN WEB VIDEO CASTER */
-    player.addButton(
-      'https://cdn.freebiesupply.com/logos/thumbs/2x/cast-icon-chromecast-logo.png',
-      'Transmitir a TV (Web Video Caster)',
-      () => {
-        try {
-          const videoUrl = player.getPlaylistItem().file; // URL actual del video
-          const wvcUrl = `wvc-x-callback://open?url=${encodeURIComponent(videoUrl)}&secure_uri=true`;
-          window.location.href = wvcUrl;
-        } catch(e) {
-          console.error("Error al abrir Web Video Caster", e);
-        }
-      },
-      'cast'
-    );
-    /* ✅ FIN BOTÓN WVC */
-
-    // 🔹 Reanudar video
-    const savedTime = localStorage.getItem(`movie_${id}_time`);
-    if(savedTime && parseFloat(savedTime) > 30) {
-      const overlay = document.createElement('div');
-      overlay.className = 'resume-overlay';
-      overlay.innerHTML = `
-        <p>¿Deseas continuar desde el minuto ${(savedTime/60).toFixed(1)}?</p>
-        <div>
-          <button id="resumeYes">Sí, continuar</button>
-          <button id="resumeNo">No, empezar de nuevo</button>
-        </div>`;
+  player.on('ready',()=>{
+    if(loadingDiv)loadingDiv.style.display="none";
+    const savedTime=localStorage.getItem(`movie_${id}_time`);
+    if(savedTime && parseFloat(savedTime)>30){
+      const overlay=document.createElement('div');
+      overlay.className='resume-overlay';
+      overlay.innerHTML=`<p>¿Continuar desde ${(savedTime/60).toFixed(1)} min?</p>
+        <div><button id="resumeYes">Sí</button><button id="resumeNo">No</button></div>`;
       document.getElementById('player-container').appendChild(overlay);
-
-      document.getElementById('resumeYes').onclick = () => {
-        overlay.remove();
-        player.seek(parseFloat(savedTime));
-        player.play(true);
-      };
-      document.getElementById('resumeNo').onclick = () => {
-        overlay.remove();
-        player.play(true);
-      };
+      document.getElementById('resumeYes').onclick=()=>{overlay.remove();player.seek(parseFloat(savedTime));player.play(true);};
+      document.getElementById('resumeNo').onclick=()=>{overlay.remove();player.play(true);};
     }
-
-    // 🔹 Guardar tiempo cada 10 segundos
-    setInterval(() => {
-      const pos = player.getPosition();
-      if(pos > 0) localStorage.setItem(`movie_${id}_time`, pos);
-    }, 10000);
+    setInterval(()=>{
+      const pos=player.getPosition();
+      if(pos>0)localStorage.setItem(`movie_${id}_time`,pos);
+    },10000);
   });
 }
 </script>
-
- <script>
-
- // URL del enlace que se abrirá en la ventana emergente
-
-    var enlace = "https://otieu.com/4/9705600";
-
-    // Contador de clics
-
-    var contadorClics = 0;
-
-    // Función para abrir la ventana emergente solo en el primer clic
-
-    function abrirVentanaEmergente() {
-
-      if (contadorClics === 0) {
-
-        window.open(enlace, "_blank", "width=500,height=500");
-
-        contadorClics++;
-
-      }
-
-    }
-
-    // Evento para detectar el clic en cualquier parte de la página
-
-    document.addEventListener("click", abrirVentanaEmergente); 
-    
-
- </script>
 </body>
 </html>
